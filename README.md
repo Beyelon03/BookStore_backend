@@ -15,11 +15,10 @@ This project is a website for selling books.
 
 1. Clone the repository: `git clone <your-repository-url>`
 2. Install dependencies: `npm install`
-3. Create new file '.env' and add this: 
+3. Create new file '.env' and add these lines: 
 `PORT="YOUR_PORT"`
 `DB_URL="YOUR_DB_URL_CONNECT"`
 `JWT_SECRET="YOUR_JWT_SECRET_KEY"`
-
 
 
 ## Usage
@@ -36,7 +35,7 @@ This project is a website for selling books.
 
 ## Author
 
-Beyelon - beyelon@gmail.com
+**Beyelon** - beyelon@gmail.com
 
 ## License
 
