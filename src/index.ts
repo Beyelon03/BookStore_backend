@@ -34,6 +34,8 @@ const startServer = async () => {
       console.log(`Сервер запущен: http://localhost:${PORT}.`);
     });
 
+    console.log(123);
+
   } catch (error) {
     if (error instanceof Error) {
       console.log('Ошибка:', error.message);
