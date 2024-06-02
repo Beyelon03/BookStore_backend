@@ -3,6 +3,7 @@ import User from '../models/User';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
+
 interface IUserService {
   registration(user: IUser): Promise<IUser>;
 
@@ -17,7 +18,7 @@ interface IUserService {
   delete(userId: string): Promise<void>;
 }
 
-const JWT_SECRET = process.env.JWT_SECRET || 'jwt-secret-key';
+export const JWT_SECRET = process.env.JWT_SECRET || 'jwt-secret-key';
 
 const generateAccessToken = (user: IUser) => {
   const payload = {
@@ -60,6 +61,7 @@ class UserService implements IUserService {
 
     const userDto = {
       id: user._id,
+      role: user.role,
       username: user.username,
       email: user.email,
     };

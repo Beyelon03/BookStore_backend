@@ -1,9 +1,11 @@
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
 import userController from '../controllers/user.controller';
 import {
   getRegistrationValidation,
   validateRequest,
 } from '../middlewares/userValidator.middleware';
+import authMiddleware from '../middlewares/auth.middleware';
+import adminMiddleware from '../middlewares/admin.middleware';
 
 const router = Router();
 
@@ -14,9 +16,10 @@ router.post(
   userController.registration,
 );
 router.post('/login', userController.login);
-router.get('/', userController.getAll);
-router.get('/:id', userController.getById);
-router.put('/:id', userController.update);
-router.delete('/:id', userController.delete);
+
+router.get('/', adminMiddleware, userController.getAll);
+router.get('/:id', adminMiddleware, userController.getById);
+router.put('/:id', adminMiddleware, userController.update);
+router.delete('/:id', adminMiddleware, userController.delete);
 
 export default router;
