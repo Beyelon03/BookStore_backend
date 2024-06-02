@@ -27,7 +27,6 @@ export default function authMiddleware(
       token,
       JWT_SECRET,
     ) as IDecodeData;
-    console.log(decodeData);
     req.user = decodeData;
     next();
   } catch (error) {
