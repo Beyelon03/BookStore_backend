@@ -10,7 +10,6 @@ import appRoutes from './routes/app.routes';
 
 const PORT = process.env.PORT;
 const DB_URL = process.env.DB_URL;
-export const JWT_SECRET = process.env.JWT_SECRET;
 
 const app = express();
 
