@@ -1,5 +1,4 @@
 import { IUser } from '../interfaces/IUser';
-import UserModel from '../models/User';
 import User from '../models/User';
 import bcrypt from 'bcrypt';
 
@@ -19,11 +18,11 @@ interface IUserService {
 
 class UserService implements IUserService {
   async registration(user: IUser): Promise<IUser> {
-    const existingUser = await UserModel.findOne({
+    const existingUser = await User.findOne({
       $or: [{ email: user.email }, { username: user.username }],
     });
     if (existingUser) {
-      throw new Error('Пользователь с таким именем или email уже существует');
+     throw new Error('Пользователь с таким именем или email уже существует.');
     }
 
     const hashedPassword = await bcrypt.hash(user.password, 7);

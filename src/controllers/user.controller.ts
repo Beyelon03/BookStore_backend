@@ -7,7 +7,7 @@ import UserService from '../services/user.service';
 import { validationResult } from 'express-validator';
 
 export interface IUserController {
-  registration(req: Request, res: Response): Promise<Response>
+  registration(req: Request, res: Response): Promise<Response>;
 
   login(req: Request, res: Response): Promise<void>;
 
@@ -26,7 +26,11 @@ class UserController implements IUserController {
       const userData: IUser = await UserService.registration(req.body);
       return res.status(201).json(userData);
     } catch (error) {
-      return res.status(400).json({ message: 'Ошибка при регистрации.' });
+      if (error instanceof Error) {
+        return res.status(400).json({ message: error.message });
+      } else {
+        return res.status(400).json({ message: 'Произошла неизвестная ошибка.' });
+      }
     }
   }
 

@@ -1,9 +1,12 @@
 import { Router, Request, Response } from 'express';
 import userController from '../controllers/user.controller';
+import {
+  getRegistrationValidation, validateRequest,
+} from '../middlewares/userValidator.middleware';
 
 const router = Router();
 
-router.post('/registration', userController.registration)
+router.post('/registration', getRegistrationValidation(), validateRequest, userController.registration)
 
 
 export default router;
