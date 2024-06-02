@@ -118,7 +118,7 @@ class UserController implements IUserController {
   > {
     try {
       const { id } = req.params;
-      const user = await UserService.delete(id);
+      await UserService.delete(id);
       return res
         .status(201)
         .json({ message: `Пользователь с id: ${id} удалён.` });
