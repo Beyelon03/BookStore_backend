@@ -6,13 +6,7 @@ import jwt from 'jsonwebtoken';
 interface IUserService {
   registration(user: IUser): Promise<IUser>;
 
-  login(
-    email: string,
-    password: string,
-  ): Promise<{
-    token: string;
-    user: { id: string; username: string; email: string };
-  }>;
+  login(email: string, password: string): Promise<{token: string}>;
 
   getAll(): Promise<IUser[]>;
 
@@ -20,10 +14,23 @@ interface IUserService {
 
   update(userId: string, user: Partial<IUser>): Promise<IUser | null>;
 
-  delete(userId: string): any;
+  delete(userId: string): Promise<void>;
 }
 
 const JWT_SECRET = process.env.JWT_SECRET || 'jwt-secret-key';
+
+const generateAccessToken = (user: IUser) => {
+  const payload = {
+    id: user._id,
+    role: user.role,
+    username: user.username,
+    email: user.email,
+  };
+  if (!JWT_SECRET) {
+    throw new Error('Ошибка, отсутсвует JWT_SECRET');
+  }
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: '24h' });
+};
 
 class UserService implements IUserService {
   async registration(user: IUser): Promise<IUser> {
@@ -38,23 +45,17 @@ class UserService implements IUserService {
     return await User.create({ ...user, password: hashedPassword });
   }
 
-  async login(
-    username: string,
-    password: string,
-  ): Promise<{
-    token: string;
-    user: { id: string; username: string; email: string };
-  }> {
+  async login(username: string, password: string): Promise<{token: string}> {
     const user = await User.findOne({
       $or: [{ email: username }, { username: username }],
     });
     if (!user) {
-      throw new Error('Пользователь с таким именем не найден.');
+      throw new Error(`Пользователь с именем ${username} не найден.`);
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      throw new Error('Данные для авторизации введены не верно.');
+      throw new Error('Введен не верный пароль.');
     }
 
     const userDto = {
@@ -63,20 +64,8 @@ class UserService implements IUserService {
       email: user.email,
     };
 
-    const token = jwt.sign(
-      {
-        id: user._id,
-        role: user.role,
-        username: user.username,
-        email: user.email,
-      },
-      JWT_SECRET,
-      {
-        expiresIn: '24h',
-      },
-    );
-
-    return { token: token, user: userDto };
+    const token = generateAccessToken(user);
+    return { token };
   }
 
   async getAll(): Promise<IUser[]> {
