@@ -3,9 +3,11 @@ import User from '../models/User';
 import { IUser } from '../interfaces/IUser';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import UserService from '../services/user.service';
+import { validationResult } from 'express-validator';
 
 export interface IUserController {
-  registration(req: Request, res: Response): Promise<void>;
+  registration(req: Request, res: Response): Promise<Response>
 
   login(req: Request, res: Response): Promise<void>;
 
@@ -19,8 +21,13 @@ export interface IUserController {
 }
 
 class UserController implements IUserController {
-  async registration(req: Request, res: Response): Promise<void> {
-    throw new Error('Method not implemented.');
+  async registration(req: Request, res: Response): Promise<Response> {
+    try {
+      const userData: IUser = await UserService.registration(req.body);
+      return res.status(201).json(userData);
+    } catch (error) {
+      return res.status(400).json({ message: 'Ошибка при регистрации.' });
+    }
   }
 
   async login(req: Request, res: Response): Promise<void> {
