@@ -16,7 +16,7 @@ export interface IRefreshToken {
 
 // Интерфейс для элемента заказа
 export interface IOrderItem {
-  book: IBook; // Книга
+  book: IBook['_id']; // ID книги
   quantity: number; // Количество книг
 }
 
@@ -30,10 +30,11 @@ export interface IOrder {
 
 // Интерфейс для комментария пользователя
 export interface IUserComment {
-  commenter: IUser; // Пользователь, оставивший комментарий
-  comment: string; // Текст комментария
+  commenter: string; // ID пользователя, оставившего отзыв
+  book: IBook['_id']; // ID книги, к которой относится отзыв
+  comment: string; // Текст отзыва
   rating: 1 | 2 | 3 | 4 | 5; // Оценка книги (от 1 до 5)
-  date: Date; // Дата комментария
+  date: Date; // Дата отзыва
 }
 
 // Интерфейс пользователя

@@ -3,7 +3,6 @@ import User from '../models/User';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-
 interface IUserService {
   registration(user: IUser): Promise<IUser>;
 
@@ -59,13 +58,6 @@ class UserService implements IUserService {
       throw new Error('Введен не верный пароль.');
     }
 
-    const userDto = {
-      id: user._id,
-      role: user.role,
-      username: user.username,
-      email: user.email,
-    };
-
     const token = generateAccessToken(user);
     return { token };
   }
@@ -91,3 +83,5 @@ class UserService implements IUserService {
 }
 
 export default new UserService();
+
+

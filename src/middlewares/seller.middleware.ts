@@ -11,7 +11,13 @@ export interface IDecodeData {
   exp: number;
 }
 
-export default function adminMiddleware(
+declare module 'express-serve-static-core' {
+  interface Request {
+    user?: IDecodeData;
+  }
+}
+
+export default function sellerMiddleware(
   req: Request,
   res: Response,
   next: NextFunction,

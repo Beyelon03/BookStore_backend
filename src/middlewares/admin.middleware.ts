@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../services/user.service';
 
 export interface IDecodeData {
@@ -9,6 +9,12 @@ export interface IDecodeData {
   email: string;
   iat: number;
   exp: number;
+}
+
+declare module 'express-serve-static-core' {
+  interface Request {
+    user?: IDecodeData;
+  }
 }
 
 export default function adminMiddleware(

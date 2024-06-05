@@ -4,19 +4,12 @@ import {
   getRegistrationValidation,
   validateRequest,
 } from '../middlewares/userValidator.middleware';
-import authMiddleware from '../middlewares/auth.middleware';
 import adminMiddleware from '../middlewares/admin.middleware';
 
 const router = Router();
 
-router.post(
-  '/registration',
-  getRegistrationValidation(),
-  validateRequest,
-  userController.registration,
-);
+router.post('/registration', getRegistrationValidation(), validateRequest, userController.registration);
 router.post('/login', userController.login);
-
 router.get('/', adminMiddleware, userController.getAll);
 router.get('/:id', adminMiddleware, userController.getById);
 router.put('/:id', adminMiddleware, userController.update);

@@ -1,13 +1,6 @@
 // Интерфейс для отзыва о книге
 import { IUser } from './IUser';
 
-export interface IReview {
-  commenter: IUser['_id']; // ID пользователя, оставившего отзыв
-  comment: string; // Текст отзыва
-  rating: 1 | 2 | 3 | 4 | 5; // Оценка книги (от 1 до 5)
-  date: Date; // Дата отзыва
-}
-
 // Интерфейс для книги
 export interface IBook {
   _id: string; // ID книги (генерируется MongoDB)
@@ -30,7 +23,6 @@ export interface IBook {
   stock: number; // Наличие книги на складе
   seller: IUser['_id'][]; // Пользователи, продающие книгу (массив пользователей)
   rating?: number; // Рейтинг книги (опционально)
-  reviews?: IReview[]; // Массив отзывов о книге (опционально)
 }
 
 export interface IBookDocument extends IBook, Document {}

@@ -37,7 +37,7 @@ class UserController implements IUserController {
       } else {
         return res
           .status(400)
-          .json({ message: 'Произошла неизвестная ошибка.' });
+          .json({ message: 'Произошла ошибка при регистрации.' });
       }
     }
   }
@@ -48,15 +48,15 @@ class UserController implements IUserController {
   ): Promise<Response<string | undefined>> {
     try {
       const { username, password } = req.body;
-      const userData = await UserService.login(username, password);
-      return res.status(201).json(userData);
+      const token = await UserService.login(username, password);
+      return res.status(201).json(token);
     } catch (error) {
       if (error instanceof Error) {
         return res.status(400).json({ message: error.message });
       } else {
         return res
           .status(400)
-          .json({ message: 'Произошла неизвестная ошибка.' });
+          .json({ message: 'Произошла ошибка при авторизации.' });
       }
     }
   }
@@ -72,7 +72,7 @@ class UserController implements IUserController {
       } else {
         return res
           .status(400)
-          .json({ message: 'Произошла неизвестная ошибка.' });
+          .json({ message: 'Произошла ошибка при получении пользователя.' });
       }
     }
   }
@@ -87,7 +87,7 @@ class UserController implements IUserController {
       } else {
         return res
           .status(400)
-          .json({ message: 'Произошла неизвестная ошибка.' });
+          .json({ message: 'Произошла ошибка при получении пользователей.' });
       }
     }
   }
@@ -103,7 +103,7 @@ class UserController implements IUserController {
       } else {
         return res
           .status(400)
-          .json({ message: 'Произошла неизвестная ошибка.' });
+          .json({ message: 'Произошла ошибка при обновлении пользователя.' });
       }
     }
   }
@@ -128,7 +128,7 @@ class UserController implements IUserController {
       } else {
         return res
           .status(400)
-          .json({ message: 'Произошла неизвестная ошибка.' });
+          .json({ message: 'Произошла ошибка при удалении пользователя.' });
       }
     }
   }

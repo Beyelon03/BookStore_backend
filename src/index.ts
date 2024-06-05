@@ -5,7 +5,7 @@ dotenv.config();
 import cors from 'cors';
 import mongoose from 'mongoose';
 import fileUpload from 'express-fileupload';
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
 import appRoutes from './routes/app.routes';
 
 const PORT = process.env.PORT;
@@ -15,7 +15,7 @@ const app = express();
 
 app.use(cors());
 app.use(fileUpload({}));
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use('/api', appRoutes);

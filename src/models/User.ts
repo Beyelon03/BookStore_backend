@@ -104,25 +104,41 @@ const UserSchema: Schema<IUserDocument> = new Schema<IUserDocument>({
   ],
   comments: [
     {
+      book: {
+        type: Schema.Types.ObjectId,
+        ref: 'Book',
+        required: true,
+      },
       commenter: {
         type: Schema.Types.ObjectId,
         ref: 'User',
+        required: true,
       },
       comment: {
         type: String,
+        required: true,
       },
       rating: {
         type: Number,
         min: 1,
         max: 5,
+        required: true,
       },
       date: {
         type: Date,
+        required: true,
+        default: Date.now,
       },
+    },
+  ],
+  books: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Book',
     },
   ],
 });
 
-const UserModel = mongoose.model<IUserDocument>('User', UserSchema);
+const UserModel = mongoose.model<IUserDocument>('User', UserSchema, 'users');
 
 export default UserModel;

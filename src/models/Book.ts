@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 import { IBookDocument } from '../interfaces/IBook';
 
 const BookSchema: Schema<IBookDocument> = new Schema<IBookDocument>({
@@ -79,31 +79,8 @@ const BookSchema: Schema<IBookDocument> = new Schema<IBookDocument>({
   rating: {
     type: Number,
   },
-  reviews: [
-    {
-      commenter: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
-      },
-      comment: {
-        type: String,
-        required: true,
-      },
-      rating: {
-        type: Number,
-        required: true,
-        min: 1,
-        max: 5,
-      },
-      date: {
-        type: Date,
-        required: true,
-      },
-    },
-  ],
 });
 
-const BookModel = mongoose.model<IBookDocument>('Book', BookSchema);
+const BookModel = mongoose.model<IBookDocument>('Book', BookSchema, 'books');
 
 export default BookModel;
