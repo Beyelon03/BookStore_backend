@@ -27,7 +27,7 @@ class UserService {
       throw new Error('Пользователь с таким именем или email уже существует.');
     }
 
-    const hashedPassword = await bcrypt.hash(user.password, 7);
+    const hashedPassword = await bcrypt.hash(user.password!, 7);
     return await User.create({ ...user, password: hashedPassword });
   }
 
@@ -39,7 +39,7 @@ class UserService {
       throw new Error(`Пользователь с именем ${username} не найден.`);
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, user.password!);
     if (!isMatch) {
       throw new Error('Введен не верный пароль.');
     }
