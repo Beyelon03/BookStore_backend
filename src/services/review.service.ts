@@ -17,10 +17,7 @@ class ReviewService {
     return review;
   }
 
-  async update(
-    reviewId: string,
-    newReview: IReview,
-  ): Promise<IReview | null> {
+  async update(reviewId: string, newReview: IReview): Promise<IReview | null> {
     const review = await Review.findByIdAndUpdate(reviewId, newReview, {
       new: true,
     });

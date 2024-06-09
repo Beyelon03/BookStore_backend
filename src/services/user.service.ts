@@ -31,7 +31,7 @@ class UserService {
     return await User.create({ ...user, password: hashedPassword });
   }
 
-  async login(username: string, password: string): Promise<{token: string}> {
+  async login(username: string, password: string): Promise<{ token: string }> {
     const user = await User.findOne({
       $or: [{ email: username }, { username: username }],
     });
@@ -69,5 +69,3 @@ class UserService {
 }
 
 export default new UserService();
-
-
