@@ -1,7 +1,7 @@
 import mongoose, { Model, Schema } from 'mongoose';
-import { IUserComment } from '../interfaces/IUser';
+import { IReview } from '../interfaces/IUser';
 
-export interface IReviewDocument extends IUserComment, Document {}
+export interface IReviewDocument extends IReview, Document {}
 
 const ReviewSchema: Schema<IReviewDocument> = new Schema<IReviewDocument>({
   book: {

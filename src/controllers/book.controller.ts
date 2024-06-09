@@ -3,10 +3,7 @@ import { IBook } from '../interfaces/IBook';
 import BookService from '../services/book.service';
 
 class BookController {
-  async create(
-    req: Request,
-    res: Response,
-  ): Promise<Response<IBook | null>> {
+  async create(req: Request, res: Response): Promise<Response<IBook | null>> {
     try {
       const bookData: IBook = await BookService.create(req.body);
       return res.status(201).json(bookData);
@@ -15,7 +12,7 @@ class BookController {
         return res.status(400).json({ message: error.message });
       } else {
         return res
-          .status(400)
+          .status(500)
           .json({ message: 'Произошла ошибка при создании книги.' });
       }
     }
@@ -31,7 +28,7 @@ class BookController {
         return res.status(400).json({ message: error.message });
       } else {
         return res
-          .status(400)
+          .status(500)
           .json({ message: 'Произошла ошибка при получении книги.' });
       }
     }
@@ -46,7 +43,7 @@ class BookController {
         return res.status(400).json({ message: error.message });
       } else {
         return res
-          .status(400)
+          .status(500)
           .json({ message: 'Произошла ошибка при получении книг.' });
       }
     }
@@ -62,7 +59,7 @@ class BookController {
         return res.status(400).json({ message: error.message });
       } else {
         return res
-          .status(400)
+          .status(500)
           .json({ message: 'Произошла ошибка при обновлении книги.' });
       }
     }
@@ -79,15 +76,13 @@ class BookController {
     try {
       const { id } = req.params;
       await BookService.delete(id);
-      return res
-        .status(201)
-        .json({ message: `Книга с id: ${id} удалена.` });
+      return res.status(201).json({ message: `Книга с id: ${id} удалена.` });
     } catch (error) {
       if (error instanceof Error) {
         return res.status(400).json({ message: error.message });
       } else {
         return res
-          .status(400)
+          .status(500)
           .json({ message: 'Произошла ошибка при удалении книги.' });
       }
     }

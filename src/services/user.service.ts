@@ -3,20 +3,6 @@ import User from '../models/User';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-interface IUserService {
-  registration(user: IUser): Promise<IUser>;
-
-  login(email: string, password: string): Promise<{token: string}>;
-
-  getAll(): Promise<IUser[]>;
-
-  getById(id: string): Promise<IUser | null>;
-
-  update(userId: string, user: Partial<IUser>): Promise<IUser | null>;
-
-  delete(userId: string): Promise<void>;
-}
-
 export const JWT_SECRET = process.env.JWT_SECRET || 'jwt-secret-key';
 
 const generateAccessToken = (user: IUser) => {
@@ -32,7 +18,7 @@ const generateAccessToken = (user: IUser) => {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: '24h' });
 };
 
-class UserService implements IUserService {
+class UserService {
   async registration(user: IUser): Promise<IUser> {
     const existingUser = await User.findOne({
       $or: [{ email: user.email }, { username: user.username }],

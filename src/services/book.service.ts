@@ -2,19 +2,7 @@ import { IBook } from '../interfaces/IBook';
 import Book from '../models/Book';
 import User from '../models/User';
 
-interface IBookService {
-  create(book: IBook): Promise<IBook>;
-
-  getAll(): Promise<IBook[]>;
-
-  getById(id: string): Promise<IBook | null>;
-
-  update(bookId: string, user: Partial<IBook>): Promise<IBook | null>;
-
-  delete(bookId: string): Promise<void>;
-}
-
-class BookService implements IBookService {
+class BookService {
   async create(book: IBook): Promise<IBook> {
     const newBook = await Book.create({ ...book });
     await User.updateMany(
