@@ -8,7 +8,7 @@ import BookService from '../services/book.service';
 class ReviewController {
   async create(req: Request, res: Response): Promise<Response<IReview> | null> {
     try {
-      const review: IReview = await Review.create(req.body);
+      const review = await ReviewService.create(req.body);
       return res.status(201).json(review);
     } catch (error) {
       if (error instanceof Error) {
