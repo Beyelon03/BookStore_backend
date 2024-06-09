@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../services/user.service';
+import { UserRoles } from '../interfaces/IUser';
 
 export interface IDecodeData {
   id: string;
@@ -35,7 +36,7 @@ export default function sellerMiddleware(
       token,
       JWT_SECRET,
     ) as IDecodeData;
-    if (decodeData.role === 'seller' || decodeData.role === 'admin') {
+    if (decodeData.role === UserRoles.seller || decodeData.role === UserRoles.admin) {
       req.user = decodeData;
       next();
     } else {

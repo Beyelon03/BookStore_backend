@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { IUserDocument } from '../interfaces/IUser';
+import { IUserDocument, UserRoles } from '../interfaces/IUser';
 
 const UserSchema: Schema<IUserDocument> = new Schema<IUserDocument>({
   username: {
@@ -21,8 +21,8 @@ const UserSchema: Schema<IUserDocument> = new Schema<IUserDocument>({
   },
   role: {
     type: String,
-    enum: ['admin', 'user', 'seller'],
-    default: 'user',
+    enum: [UserRoles],
+    default: UserRoles.user,
   },
   address: {
     type: {

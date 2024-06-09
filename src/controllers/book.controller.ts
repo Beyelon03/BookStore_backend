@@ -2,26 +2,7 @@ import { Request, Response } from 'express';
 import { IBook } from '../interfaces/IBook';
 import BookService from '../services/book.service';
 
-export interface IBookController {
-  create(req: Request, res: Response): Promise<Response<IBook | null>>;
-
-  getById(req: Request, res: Response): Promise<Response<IBook | null>>;
-
-  getAll(req: Request, res: Response): Promise<Response<IBook[] | null>>;
-
-  update(req: Request, res: Response): Promise<Response<IBook | null>>;
-
-  delete(
-    req: Request,
-    res: Response,
-  ): Promise<
-    Response<{
-      message: string;
-    } | null>
-  >;
-}
-
-class BookController implements IBookController {
+class BookController {
   async create(
     req: Request,
     res: Response,

@@ -5,6 +5,7 @@ import {
   validateRequest,
 } from '../middlewares/userValidator.middleware';
 import adminMiddleware from '../middlewares/admin.middleware';
+import {  } from 'express';
 
 const router = Router();
 

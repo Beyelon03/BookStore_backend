@@ -2,28 +2,7 @@ import { Request, Response } from 'express';
 import { IUser } from '../interfaces/IUser';
 import UserService from '../services/user.service';
 
-export interface IUserController {
-  registration(req: Request, res: Response): Promise<Response<IUser | null>>;
-
-  login(req: Request, res: Response): Promise<Response<string | undefined>>;
-
-  getById(req: Request, res: Response): Promise<Response<IUser | null>>;
-
-  getAll(req: Request, res: Response): Promise<Response<IUser[] | null>>;
-
-  update(req: Request, res: Response): Promise<Response<IUser | null>>;
-
-  delete(
-    req: Request,
-    res: Response,
-  ): Promise<
-    Response<{
-      message: string;
-    } | null>
-  >;
-}
-
-class UserController implements IUserController {
+class UserController {
   async registration(
     req: Request,
     res: Response,

@@ -8,6 +8,12 @@ export interface IAddress {
   zipCode: string;
 }
 
+export enum UserRoles {
+  admin = 'admin',
+  user = 'user',
+  seller = 'seller'
+}
+
 // Интерфейс для refresh токена
 export interface IRefreshToken {
   token: string;
@@ -44,7 +50,7 @@ export interface IUser {
   username: string; // Никнейм пользователя
   email: string; // Email пользователя
   password: string; // Хэшированный пароль пользователя
-  role?: 'admin' | 'user' | 'seller'; // Роль пользователя: администратор, пользователь, продавец
+  role?: UserRoles; // Роль пользователя: администратор, пользователь, продавец
 
   address?: IAddress; // Адрес пользователя
   phoneNumber?: string; // Номер телефона пользователя
