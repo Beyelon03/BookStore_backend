@@ -1,42 +1,39 @@
-# Project "Book store"
+# Project "Book Store"
 
-This project is a website for selling books.
+Этот проект представляет собой веб-сайт для продажи книг.
 
-## **Features**
+## **Особенности**
 
-- User registration and authentication
-- Browse book catalog
-- Add books to cart
-- Checkout orders
-- View order history
-- Admin management of books
+- Регистрация и аутентификация пользователей
+- Просмотр каталога книг
+- Добавление книг в корзину
+- Оформление заказов
+- Просмотр истории заказов
+- Управление книгами для администратора
 
-## Installation
+## Установка
 
-1. Clone the repository: `git clone <your-repository-url>`
-2. Install dependencies: `npm install`
-3. Create new file '.env' and add these lines: 
-`PORT="YOUR_PORT"`
-`DB_URL="YOUR_DB_URL_CONNECT"`
-`JWT_SECRET="YOUR_JWT_SECRET_KEY"`
+1. Клонируйте репозиторий: `git clone <your-repository-url>`
+2. Установите зависимости: `npm install`
+3. Создайте новый файл `.env` и добавьте следующие строки:
+    ```
+    PORT="YOUR_PORT"
+    DB_URL="YOUR_DB_URL_CONNECT"
+    JWT_SECRET="YOUR_JWT_SECRET_KEY"
+    ```
 
+## Использование
 
-## Usage
+1. Запустите сервер: `npm run start:dev`
+2. Откройте веб-сайт в браузере: `http://localhost:3000`
 
-1. Start the server: `npm run start:dev`
-2. Open the website in a browser: `http://localhost:3000`
-
-## Technologies
+## Технологии
 
 - Node.js
 - Express.js
 - MongoDB
 - TypeScript
 
-## Author
+## Автор
 
 **Beyelon** - beyelon@gmail.com
-
-## License
-
-This project is licensed under the ISC License.
