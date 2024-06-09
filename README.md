@@ -25,7 +25,7 @@
 ## Использование
 
 1. Запустите сервер: `npm run start:dev`
-2. Откройте веб-сайт в браузере: `http://localhost:3000`
+2. Откройте веб-сайт в браузере: `http://localhost:PORT`
 
 ## Технологии
 
@@ -33,6 +33,9 @@
 - Express.js
 - MongoDB
 - TypeScript
+- jsonwebtoken: для создания и проверки JWT токенов.
+- mongoose: для работы с MongoDB.
+- prettier: для форматирования кода.
 
 ## Автор
 
