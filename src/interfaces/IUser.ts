@@ -45,11 +45,11 @@ export interface IReview {
 
 // Интерфейс пользователя
 export interface IUser {
-  _id?: string; // ID пользователя (генерируется MongoDB)
+  _id: string; // ID пользователя (генерируется MongoDB)
+  username: string; // Никнейм пользователя
+  email: string; // Email пользователя
+  password: string; // Хэшированный пароль пользователя
   name?: string; // Имя пользователя
-  username?: string; // Никнейм пользователя
-  email?: string; // Email пользователя
-  password?: string; // Хэшированный пароль пользователя
   role?: UserRoles; // Роль пользователя: администратор, пользователь, продавец
 
   address?: IAddress; // Адрес пользователя
@@ -65,5 +65,3 @@ export interface IUser {
   comments?: IReview[]; // Комментарии пользователя
   books?: IBook['_id'][]; // Массив ID книг пользователя
 }
-
-export interface IUserDocument extends IUser, Document {}

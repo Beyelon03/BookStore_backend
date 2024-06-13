@@ -1,113 +1,115 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { IUser } from '../interfaces/IUser';
 import UserService from '../services/user.service';
+import { ApiError } from '../exceptions/api.error';
 
 class UserController {
   async registration(
     req: Request,
     res: Response,
-  ): Promise<Response<IUser | null>> {
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const userData: IUser = await UserService.registration(req.body);
-      return res.status(201).json(userData);
+      res.status(201).json(userData);
     } catch (error) {
-      if (error instanceof Error) {
-        return res.status(400).json({ message: error.message });
+      if (error instanceof ApiError) {
+        next(error);
+      } else if (error instanceof Error) {
+        next(new ApiError(400, error.message));
       } else {
-        return res
-          .status(400)
-          .json({ message: 'Произошла ошибка при регистрации.' });
+        next(new ApiError(400, 'Произошла ошибка при регистрации.'));
       }
     }
   }
 
-  async login(
-    req: Request,
-    res: Response,
-  ): Promise<Response<string | undefined>> {
+  async login(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { username, password } = req.body;
       const token = await UserService.login(username, password);
-      return res.status(201).json(token);
+      res.status(200).json(token);
     } catch (error) {
-      if (error instanceof Error) {
-        return res.status(400).json({ message: error.message });
+      if (error instanceof ApiError) {
+        next(error);
+      } else if (error instanceof Error) {
+        next(new ApiError(400, error.message));
       } else {
-        return res
-          .status(400)
-          .json({ message: 'Произошла ошибка при авторизации.' });
+        next(new ApiError(400, 'Произошла ошибка при авторизации.'));
       }
     }
   }
 
-  async getById(req: Request, res: Response): Promise<Response<IUser | null>> {
+  async getById(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const { id } = req.params;
       const userData = await UserService.getById(id);
-      return res.status(201).json(userData);
+      if (!userData) {
+        next(new ApiError(404, `Пользователь с id: ${id} не найден.`));
+        return;
+      }
+      res.status(200).json(userData);
     } catch (error) {
-      if (error instanceof Error) {
-        return res.status(400).json({ message: error.message });
+      if (error instanceof ApiError) {
+        next(error);
+      } else if (error instanceof Error) {
+        next(new ApiError(400, error.message));
       } else {
-        return res
-          .status(400)
-          .json({ message: 'Произошла ошибка при получении пользователя.' });
+        next(new ApiError(400, 'Произошла ошибка при получении пользователя.'));
       }
     }
   }
 
-  async getAll(req: Request, res: Response): Promise<Response<IUser[] | null>> {
+  async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const users = await UserService.getAll();
-      return res.status(201).json(users);
+      res.status(200).json(users);
     } catch (error) {
-      if (error instanceof Error) {
-        return res.status(400).json({ message: error.message });
+      if (error instanceof ApiError) {
+        next(error);
+      } else if (error instanceof Error) {
+        next(new ApiError(400, error.message));
       } else {
-        return res
-          .status(400)
-          .json({ message: 'Произошла ошибка при получении пользователей.' });
+        next(new ApiError(400, 'Произошла ошибка при получении пользователей.'));
       }
     }
   }
 
-  async update(req: Request, res: Response): Promise<Response<IUser | null>> {
+  async update(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
       const user: IUser | null = await UserService.update(id, req.body);
-      return res.status(201).json(user);
+      if (!user) {
+        next(new ApiError(404, `Пользователь с id: ${id} не найден.`));
+        return;
+      }
+      res.status(200).json(user);
     } catch (error) {
-      if (error instanceof Error) {
-        return res.status(400).json({ message: error.message });
+      if (error instanceof ApiError) {
+        next(error);
+      } else if (error instanceof Error) {
+        next(new ApiError(400, error.message));
       } else {
-        return res
-          .status(400)
-          .json({ message: 'Произошла ошибка при обновлении пользователя.' });
+        next(new ApiError(400, 'Произошла ошибка при обновлении пользователя.'));
       }
     }
   }
 
-  async delete(
-    req: Request,
-    res: Response,
-  ): Promise<
-    Response<{
-      message: string;
-    } | null>
-  > {
+  async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
       await UserService.delete(id);
-      return res
-        .status(201)
-        .json({ message: `Пользователь с id: ${id} удалён.` });
+      res.status(200).json({ message: `Пользователь с id: ${id} удалён.` });
     } catch (error) {
-      if (error instanceof Error) {
-        return res.status(400).json({ message: error.message });
+      if (error instanceof ApiError) {
+        next(error);
+      } else if (error instanceof Error) {
+        next(new ApiError(400, error.message));
       } else {
-        return res
-          .status(400)
-          .json({ message: 'Произошла ошибка при удалении пользователя.' });
+        next(new ApiError(400, 'Произошла ошибка при удалении пользователя.'));
       }
     }
   }

@@ -1,9 +1,6 @@
-import Review from '../models/Review';
 import { Request, Response } from 'express';
 import { IReview } from '../interfaces/IUser';
 import ReviewService from '../services/review.service';
-import { IBook } from '../interfaces/IBook';
-import BookService from '../services/book.service';
 
 class ReviewController {
   async create(req: Request, res: Response): Promise<Response<IReview> | null> {

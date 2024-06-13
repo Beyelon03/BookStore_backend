@@ -7,6 +7,7 @@ import mongoose from 'mongoose';
 import fileUpload from 'express-fileupload';
 import express from 'express';
 import appRoutes from './routes/app.routes';
+import handleError from './middlewares/error.middleware';
 
 const PORT = process.env.PORT;
 const DB_URL = process.env.DB_URL;
@@ -18,12 +19,14 @@ app.use(fileUpload({}));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+
 app.use('/api', appRoutes);
+app.use(handleError);
 
 const startServer = async () => {
   try {
     if (!DB_URL) {
-      throw new Error('DB_URL не определен.');
+      throw Error('DB_URL не определен.');
     }
 
     await mongoose.connect(DB_URL);

@@ -4,6 +4,9 @@ import Review from '../models/Review';
 class ReviewService {
   async create(reviewDto: IReview): Promise<IReview | null> {
     const review = await Review.create({ reviewDto });
+    if (!review) {
+      throw Error('Ошибка при создании комментария.');
+    }
     return review;
   }
 
