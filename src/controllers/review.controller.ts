@@ -48,8 +48,9 @@ class ReviewController {
     next: NextFunction,
   ): Promise<Response<IReview> | void> {
     try {
-      const reviews = await ReviewService.getAll();
-      return res.status(200).json(reviews);
+      const { id } = req.params;
+      const review = await ReviewService.getById(id);
+      return res.status(200).json(review);
     } catch (error) {
       if (error instanceof ApiError) {
         next(error);
