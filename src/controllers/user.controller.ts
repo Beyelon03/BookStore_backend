@@ -8,10 +8,10 @@ class UserController {
     req: Request,
     res: Response,
     next: NextFunction,
-  ): Promise<void> {
+  ): Promise<Response<IUser> | void> {
     try {
       const userData: IUser = await UserService.registration(req.body);
-      res.status(201).json(userData);
+      return res.status(201).json(userData);
     } catch (error) {
       if (error instanceof ApiError) {
         next(error);
@@ -23,11 +23,15 @@ class UserController {
     }
   }
 
-  async login(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async login(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response<{ token: string }> | void> {
     try {
       const { username, password } = req.body;
       const token = await UserService.login(username, password);
-      res.status(200).json(token);
+      return res.status(200).json({ token });
     } catch (error) {
       if (error instanceof ApiError) {
         next(error);
@@ -43,7 +47,7 @@ class UserController {
     req: Request,
     res: Response,
     next: NextFunction,
-  ): Promise<void> {
+  ): Promise<Response<IUser> | void> {
     try {
       const { id } = req.params;
       const userData = await UserService.getById(id);
@@ -63,10 +67,14 @@ class UserController {
     }
   }
 
-  async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getAll(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<Response<IUser[]> | void> {
     try {
       const users = await UserService.getAll();
-      res.status(200).json(users);
+      return res.status(200).json(users);
     } catch (error) {
       if (error instanceof ApiError) {
         next(error);
@@ -78,7 +86,11 @@ class UserController {
     }
   }
 
-  async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async update(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<Response<IUser> | void> {
     try {
       const { id } = req.params;
       const user: IUser | null = await UserService.update(id, req.body);
@@ -86,7 +98,7 @@ class UserController {
         next(new ApiError(404, `Пользователь с id: ${id} не найден.`));
         return;
       }
-      res.status(200).json(user);
+      return res.status(200).json(user);
     } catch (error) {
       if (error instanceof ApiError) {
         next(error);
@@ -98,7 +110,11 @@ class UserController {
     }
   }
 
-  async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async delete(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const { id } = req.params;
       await UserService.delete(id);

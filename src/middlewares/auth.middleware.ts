@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../services/user.service';
 import { IDecodeData } from './admin.middleware';
+import { ApiError } from '../exceptions/api.error';
 
 declare module 'express-serve-static-core' {
   interface Request {
@@ -21,7 +22,7 @@ export default function authMiddleware(
   try {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
-      return res.status(403).json({ message: 'Пользователь не авторизован.' });
+      return next(ApiError.UnauthorizedError());
     }
     const decodeData: IDecodeData = jwt.verify(
       token,
@@ -30,10 +31,6 @@ export default function authMiddleware(
     req.user = decodeData;
     next();
   } catch (error) {
-    if (error instanceof Error) {
-      return res.status(403).json({ message: 'Пользователь не авторизован.' });
-    } else {
-      return res.status(403).json({ message: 'Произошла неизвестная ошибка.' });
-    }
+    return next(ApiError.UnauthorizedError());
   }
 }
