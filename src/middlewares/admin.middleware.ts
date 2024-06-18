@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET } from '../services/user.service';
 import { UserRoles } from '../interfaces/IUser';
 import { ApiError } from '../exceptions/api.error';
+import { JWT_ACCESS_SECRET } from '../index';
 
 export interface IDecodeData {
   id: string;
@@ -33,9 +33,12 @@ export default function adminMiddleware(
     if (!token) {
       return next(ApiError.UnauthorizedError());
     }
+    if (!JWT_ACCESS_SECRET) {
+      return next(new ApiError(400, 'Отсутсвует JWT_ACCESS_SECRET'));
+    }
     const decodeData: IDecodeData = jwt.verify(
       token,
-      JWT_SECRET,
+      JWT_ACCESS_SECRET,
     ) as IDecodeData;
     if (decodeData.role === UserRoles.admin) {
       req.user = decodeData;

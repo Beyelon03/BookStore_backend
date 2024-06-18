@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET } from '../services/user.service';
 import { IDecodeData } from './admin.middleware';
 import { ApiError } from '../exceptions/api.error';
+import { JWT_ACCESS_SECRET } from '../index';
 
 declare module 'express-serve-static-core' {
   interface Request {
@@ -24,9 +24,12 @@ export default function authMiddleware(
     if (!token) {
       return next(ApiError.UnauthorizedError());
     }
+    if (!JWT_ACCESS_SECRET) {
+      return next(new ApiError(400, 'Отсутсвует JWT_ACCESS_SECRET'));
+    }
     const decodeData: IDecodeData = jwt.verify(
       token,
-      JWT_SECRET,
+      JWT_ACCESS_SECRET,
     ) as IDecodeData;
     req.user = decodeData;
     next();

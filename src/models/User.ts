@@ -51,16 +51,6 @@ const UserSchema: Schema<IUser> = new Schema<IUser>({
     type: Date,
     default: Date.now(),
   },
-  refreshTokens: [
-    {
-      token: {
-        type: String,
-      },
-      expires: {
-        type: Date,
-      },
-    },
-  ],
   orders: [
     {
       orderId: {

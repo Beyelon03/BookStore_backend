@@ -8,9 +8,11 @@ class UserController {
     req: Request,
     res: Response,
     next: NextFunction,
-  ): Promise<Response<IUser> | void> {
+  ) {
     try {
-      const userData: IUser = await UserService.registration(req.body);
+      const { email, password, username } = req.body;
+      const userData = await UserService.registration(email, password, username);
+      res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
       return res.status(201).json(userData);
     } catch (error) {
       if (error instanceof ApiError) {
@@ -31,6 +33,46 @@ class UserController {
     try {
       const { username, password } = req.body;
       const token = await UserService.login(username, password);
+      return res.status(200).json({ token });
+    } catch (error) {
+      if (error instanceof ApiError) {
+        next(error);
+      } else if (error instanceof Error) {
+        next(new ApiError(400, error.message));
+      } else {
+        next(new ApiError(400, 'Произошла ошибка при авторизации.'));
+      }
+    }
+  }
+
+  async logout(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response<{ token: string }> | void> {
+    try {
+      const { username, password } = req.body;
+      const token = await UserService.logout(username, password);
+      return res.status(200).json({ token });
+    } catch (error) {
+      if (error instanceof ApiError) {
+        next(error);
+      } else if (error instanceof Error) {
+        next(new ApiError(400, error.message));
+      } else {
+        next(new ApiError(400, 'Произошла ошибка при авторизации.'));
+      }
+    }
+  }
+
+  async refresh(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response<{ token: string }> | void> {
+    try {
+      const { username, password } = req.body;
+      const token = await UserService.refresh(username, password);
       return res.status(200).json({ token });
     } catch (error) {
       if (error instanceof ApiError) {

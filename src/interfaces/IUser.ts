@@ -1,4 +1,4 @@
-import { IBook } from './IBook';
+import { ObjectId } from 'mongoose';
 
 // Интерфейс для адреса пользователя
 export interface IAddress {
@@ -14,15 +14,9 @@ export enum UserRoles {
   seller = 'seller'
 }
 
-// Интерфейс для refresh токена
-export interface IRefreshToken {
-  token?: string;
-  expires?: Date;
-}
-
 // Интерфейс для элемента заказа
 export interface IOrderItem {
-  book?: IBook['_id']; // ID книги
+  book?: ObjectId; // ID книги
   quantity?: number; // Количество книг
 }
 
@@ -36,8 +30,8 @@ export interface IOrder {
 
 // Интерфейс для комментария пользователя
 export interface IReview {
-  commenter?: IUser['_id']; // ID пользователя, оставившего отзыв
-  book?: IBook['_id']; // ID книги, к которой относится отзыв
+  commenter?: ObjectId; // ID пользователя, оставившего отзыв
+  book?: ObjectId; // ID книги, к которой относится отзыв
   comment?: string; // Текст отзыва
   rating?: 1 | 2 | 3 | 4 | 5; // Оценка книги (от 1 до 5)
   date?: Date; // Дата отзыва
@@ -45,10 +39,10 @@ export interface IReview {
 
 // Интерфейс пользователя
 export interface IUser {
-  _id: string; // ID пользователя (генерируется MongoDB)
-  username: string; // Никнейм пользователя
   email: string; // Email пользователя
   password: string; // Хэшированный пароль пользователя
+  _id: ObjectId; // ID пользователя (генерируется MongoDB)
+  username: string; // Никнейм пользователя
   name?: string; // Имя пользователя
   role?: UserRoles; // Роль пользователя: администратор, пользователь, продавец
 
@@ -57,11 +51,10 @@ export interface IUser {
   birthDate?: Date; // Дата рождения пользователя
   createdAt?: Date; // Дата создания записи о пользователе
 
-  refreshTokens?: IRefreshToken[]; // Массив refresh токенов пользователя
   orders?: IOrder[]; // Массив заказов пользователя
   favorites?: string[]; // Массив ID избранных книг пользователя
   cart?: IOrderItem[]; // Корзина пользователя
 
   comments?: IReview[]; // Комментарии пользователя
-  books?: IBook['_id'][]; // Массив ID книг пользователя
+  books?: ObjectId[]; // Массив ID книг пользователя которые на продаже
 }

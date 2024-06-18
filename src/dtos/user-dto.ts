@@ -1,13 +1,15 @@
-class UserCreateDTO {
-  username: string;
-  email: string;
-  password: string;
+import { IUser } from '../interfaces/IUser';
 
-  constructor(user: UserCreateDTO) {
-    this.username = user.username;
-    this.email = user.email;
-    this.password = user.password;
+class UserDto {
+  email: string;
+  id: string;
+  username: string;
+
+  constructor(model: IUser) {
+    this.email = model.email;
+    this.username = model.username;
+    this.id = model._id.toString(); // Преобразуем ObjectId в строку
   }
 }
 
-export default UserCreateDTO;
+export default UserDto;

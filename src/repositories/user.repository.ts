@@ -10,7 +10,7 @@ class UserRepository {
     return User.findOne({ username }).exec();
   }
 
-  async create(user: IUser): Promise<IUser> {
+  async create(user: Partial<IUser>): Promise<IUser> {
     return User.create(user);
   }
 

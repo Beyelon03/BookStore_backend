@@ -1,48 +1,100 @@
 import { IUser } from '../interfaces/IUser';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import UserRepository from '../repositories/user.repository';
-
-export const JWT_SECRET = process.env.JWT_SECRET || 'jwt-secret-key';
-
-const generateAccessToken = (user: IUser) => {
-  const payload: Partial<IUser> = {
-    _id: user._id,
-    role: user.role,
-    username: user.username,
-    email: user.email,
-  };
-  if (!JWT_SECRET) {
-    throw new Error('Ошибка, отсутсвует JWT_SECRET');
-  }
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: '24h' });
-};
+import { ApiError } from '../exceptions/api.error';
+import TokenService from './token.service';
+import tokenService from './token.service';
+import UserDto from '../dtos/user-dto';
 
 class UserService {
-  async registration(user: IUser): Promise<IUser> {
-    const existingUserByEmail = await UserRepository.findOneByEmail(user.email);
-    const existingUserByUsername = await UserRepository.findOneByUsername(
-      user.username,
-    );
+  async registration(email: string, password: string, username: string) {
+    const existingUserByEmail = await UserRepository.findOneByEmail(email);
+    const existingUserByUsername = await UserRepository.findOneByUsername(username);
+
     if (existingUserByEmail || existingUserByUsername) {
-      throw new Error('Пользователь с таким именем или email уже существует.');
+      throw new ApiError(400, 'Пользователь с таким именем или email уже существует.');
     }
 
-    const hashedPassword = await bcrypt.hash(user.password, 7);
-    return await UserRepository.create({ ...user, password: hashedPassword });
+    const hashedPassword = await bcrypt.hash(password, 3);
+    const user: IUser = await UserRepository.create({
+      email,
+      username,
+      password: hashedPassword
+    });
+    const userDto = new UserDto(user)
+    const tokens = tokenService.generateTokens({ ...userDto });
+    await tokenService.saveToken(userDto.id, tokens.refreshToken);
+
+    return{ ...tokens, user: userDto }
   }
 
   async login(
     usernameOrEmail: string,
     password: string,
   ): Promise<{
-    token: string;
+    accessToken: string;
+    refreshToken: string;
   }> {
     const user =
       (await UserRepository.findOneByUsername(usernameOrEmail)) ||
       (await UserRepository.findOneByEmail(usernameOrEmail));
     if (!user) {
-      throw new Error(`Пользователь с именем или email ${usernameOrEmail} не найден.`);
+      throw new ApiError(
+        400,
+        `Пользователь с именем или email ${usernameOrEmail} не найден.`,
+      );
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      throw new ApiError(400, 'Введен не верный пароль.');
+    }
+
+    const token = TokenService.generateTokens(user);
+    return { ...token };
+  }
+
+  async logout(
+    usernameOrEmail: string,
+    password: string,
+  ): Promise<{
+    accessToken: string;
+    refreshToken: string;
+  }> {
+    const user =
+      (await UserRepository.findOneByUsername(usernameOrEmail)) ||
+      (await UserRepository.findOneByEmail(usernameOrEmail));
+    if (!user) {
+      throw new ApiError(
+        400,
+        `Пользователь с именем или email ${usernameOrEmail} не найден.`,
+      );
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      throw new ApiError(400, 'Введен не верный пароль.');
+    }
+
+    const token = TokenService.generateTokens(user);
+    return { ...token };
+  }
+
+  async refresh(
+    usernameOrEmail: string,
+    password: string,
+  ): Promise<{
+    accessToken: string;
+    refreshToken: string;
+  }> {
+    const user =
+      (await UserRepository.findOneByUsername(usernameOrEmail)) ||
+      (await UserRepository.findOneByEmail(usernameOrEmail));
+    if (!user) {
+      throw new ApiError(
+        400,
+        `Пользователь с именем или email ${usernameOrEmail} не найден.`,
+      );
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -50,8 +102,8 @@ class UserService {
       throw new Error('Введен не верный пароль.');
     }
 
-    const token = generateAccessToken(user);
-    return { token };
+    const token = TokenService.generateTokens(user);
+    return { ...token };
   }
 
   async getAll(): Promise<IUser[]> {

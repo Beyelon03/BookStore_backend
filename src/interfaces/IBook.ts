@@ -1,7 +1,5 @@
-// Интерфейс для отзыва о книге
-import { IUser } from './IUser';
+import { ObjectId } from 'mongoose';
 
-// Интерфейс для книги
 export interface IBook {
   _id?: string; // ID книги (генерируется MongoDB)
   title?: string; // Название книги
@@ -21,6 +19,6 @@ export interface IBook {
   addedAt?: Date; // Дата добавления книги
   coverImage?: string; // Ссылка на изображение обложки книги
   stock?: number; // Наличие книги на складе
-  seller?: IUser['_id'][]; // Пользователи, продающие книгу (массив пользователей)
+  seller?: ObjectId[]; // Пользователи, продающие книгу (массив пользователей)
   rating?: number; // Рейтинг книги (опционально)
 }
