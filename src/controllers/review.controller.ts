@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { IReview } from '../interfaces/IUser';
 import ReviewService from '../services/review.service';
-import { ApiError } from '../exceptions/api.error';
 
 class ReviewController {
   async create(
@@ -13,13 +12,7 @@ class ReviewController {
       const review = await ReviewService.create(req.body);
       return res.status(201).json(review);
     } catch (error) {
-      if (error instanceof ApiError) {
-        next(error);
-      } else if (error instanceof Error) {
-        next(new ApiError(400, error.message));
-      } else {
-        next(new ApiError(400, 'Произошла ошибка при создании комментария.'));
-      }
+      next(error);
     }
   }
 
@@ -32,13 +25,7 @@ class ReviewController {
       const reviews = await ReviewService.getAll();
       return res.status(200).json(reviews);
     } catch (error) {
-      if (error instanceof ApiError) {
-        next(error);
-      } else if (error instanceof Error) {
-        next(new ApiError(400, error.message));
-      } else {
-        next(new ApiError(400, 'Произошла ошибка при получении комментариев.'));
-      }
+      next(error);
     }
   }
 
@@ -52,13 +39,7 @@ class ReviewController {
       const review = await ReviewService.getById(id);
       return res.status(200).json(review);
     } catch (error) {
-      if (error instanceof ApiError) {
-        next(error);
-      } else if (error instanceof Error) {
-        next(new ApiError(400, error.message));
-      } else {
-        next(new ApiError(400, 'Произошла ошибка при получении комментария.'));
-      }
+      next(error);
     }
   }
 
@@ -72,13 +53,7 @@ class ReviewController {
       const review = await ReviewService.update(id, req.body);
       return res.status(201).json(review);
     } catch (error) {
-      if (error instanceof ApiError) {
-        next(error);
-      } else if (error instanceof Error) {
-        next(new ApiError(400, error.message));
-      } else {
-        next(new ApiError(400, 'Произошла ошибка при обновлении комментария.'));
-      }
+      next(error);
     }
   }
 
@@ -94,13 +69,7 @@ class ReviewController {
         .status(200)
         .json({ message: `Пользователь с ID: ${id} удалён.` });
     } catch (error) {
-      if (error instanceof ApiError) {
-        next(error);
-      } else if (error instanceof Error) {
-        next(new ApiError(400, error.message));
-      } else {
-        next(new ApiError(400, 'Произошла ошибка при удалении комментария.'));
-      }
+      next(error);
     }
   }
 }

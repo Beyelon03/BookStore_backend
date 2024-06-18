@@ -1,46 +1,46 @@
 import { IReview } from '../interfaces/IUser';
-import Review from '../models/Review';
+import { ApiError } from '../exceptions/api.error';
+import ReviewRepository from '../repositories/review.repository';
 
 class ReviewService {
   async create(reviewDto: IReview): Promise<IReview | null> {
-    const review = await Review.create({ reviewDto });
+    const review = await ReviewRepository.create(reviewDto);
     if (!review) {
-      throw Error('Ошибка при создании комментария.');
+      throw ApiError.BadRequest('Ошибка при создании комментария.');
     }
     return review;
   }
 
   async getAll(): Promise<IReview[] | null> {
-    const reviews = await Review.find();
+    const reviews = await ReviewRepository.getAll();
     if (!reviews) {
-      throw Error('Ошибка при получении комментариев.');
+      throw ApiError.NotFound('Ошибка при получении комментариев.');
     }
     return reviews;
   }
 
   async getById(reviewId: string): Promise<IReview | null> {
-    const review = await Review.findById(reviewId);
+    const review = await ReviewRepository.findById(reviewId);
     if (!review) {
-      throw Error('Ошибка при получении комментария.');
+      throw ApiError.NotFound('Ошибка при получении комментария.');
     }
     return review;
   }
 
   async update(reviewId: string, newReview: IReview): Promise<IReview | null> {
-    const review = await Review.findByIdAndUpdate(reviewId, newReview, {
-      new: true,
-    });
+    const review = await ReviewRepository.updateById(reviewId, newReview);
     if (!review) {
-      throw Error('Ошибка при обновлении комментария.');
+      throw ApiError.BadRequest('Ошибка при обновлении комментария.');
     }
     return review;
   }
 
   async delete(reviewId: string): Promise<void> {
-    const review = await Review.findByIdAndDelete(reviewId);
-    if (!review) {
-      throw Error('Ошибка при удалении комментария.');
+    const existingReviewById = await ReviewRepository.findById(reviewId);
+    if (!existingReviewById) {
+      throw ApiError.NotFound(`Комментарий с id: ${reviewId} не найден.`);
     }
+    const review = await ReviewRepository.deleteById(reviewId);
   }
 }
 

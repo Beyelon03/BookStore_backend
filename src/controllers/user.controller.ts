@@ -4,84 +4,63 @@ import UserService from '../services/user.service';
 import { ApiError } from '../exceptions/api.error';
 
 class UserController {
-  async registration(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) {
+  async registration(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password, username } = req.body;
-      const userData = await UserService.registration(email, password, username);
-      res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
+      const userData = await UserService.registration(
+        email,
+        password,
+        username,
+      );
+      res.cookie('refreshToken', userData.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+      });
       return res.status(201).json(userData);
     } catch (error) {
-      if (error instanceof ApiError) {
-        next(error);
-      } else if (error instanceof Error) {
-        next(new ApiError(400, error.message));
-      } else {
-        next(new ApiError(400, 'Произошла ошибка при регистрации.'));
-      }
+      next(error);
     }
   }
 
   async login(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<Response<{ token: string }> | void> {
     try {
       const { username, password } = req.body;
       const token = await UserService.login(username, password);
       return res.status(200).json({ token });
     } catch (error) {
-      if (error instanceof ApiError) {
-        next(error);
-      } else if (error instanceof Error) {
-        next(new ApiError(400, error.message));
-      } else {
-        next(new ApiError(400, 'Произошла ошибка при авторизации.'));
-      }
+      next(error);
     }
   }
 
   async logout(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<Response<{ token: string }> | void> {
     try {
       const { username, password } = req.body;
       const token = await UserService.logout(username, password);
       return res.status(200).json({ token });
     } catch (error) {
-      if (error instanceof ApiError) {
-        next(error);
-      } else if (error instanceof Error) {
-        next(new ApiError(400, error.message));
-      } else {
-        next(new ApiError(400, 'Произошла ошибка при авторизации.'));
-      }
+      next(error);
     }
   }
 
   async refresh(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<Response<{ token: string }> | void> {
     try {
       const { username, password } = req.body;
       const token = await UserService.refresh(username, password);
       return res.status(200).json({ token });
     } catch (error) {
-      if (error instanceof ApiError) {
-        next(error);
-      } else if (error instanceof Error) {
-        next(new ApiError(400, error.message));
-      } else {
-        next(new ApiError(400, 'Произошла ошибка при авторизации.'));
-      }
+      next(error);
     }
   }
 
@@ -94,18 +73,12 @@ class UserController {
       const { id } = req.params;
       const userData = await UserService.getById(id);
       if (!userData) {
-        next(new ApiError(404, `Пользователь с id: ${id} не найден.`));
+        next(ApiError.NotFound( `Пользователь с id: ${id} не найден.`));
         return;
       }
       res.status(200).json(userData);
     } catch (error) {
-      if (error instanceof ApiError) {
-        next(error);
-      } else if (error instanceof Error) {
-        next(new ApiError(400, error.message));
-      } else {
-        next(new ApiError(400, 'Произошла ошибка при получении пользователя.'));
-      }
+      next(error);
     }
   }
 
@@ -118,13 +91,7 @@ class UserController {
       const users = await UserService.getAll();
       return res.status(200).json(users);
     } catch (error) {
-      if (error instanceof ApiError) {
-        next(error);
-      } else if (error instanceof Error) {
-        next(new ApiError(400, error.message));
-      } else {
-        next(new ApiError(400, 'Произошла ошибка при получении пользователей.'));
-      }
+      next(error);
     }
   }
 
@@ -137,38 +104,22 @@ class UserController {
       const { id } = req.params;
       const user: IUser | null = await UserService.update(id, req.body);
       if (!user) {
-        next(new ApiError(404, `Пользователь с id: ${id} не найден.`));
+        next(ApiError.NotFound(`Пользователь с id: ${id} не найден.`));
         return;
       }
       return res.status(200).json(user);
     } catch (error) {
-      if (error instanceof ApiError) {
-        next(error);
-      } else if (error instanceof Error) {
-        next(new ApiError(400, error.message));
-      } else {
-        next(new ApiError(400, 'Произошла ошибка при обновлении пользователя.'));
-      }
+      next(error);
     }
   }
 
-  async delete(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> {
+  async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
       await UserService.delete(id);
       res.status(200).json({ message: `Пользователь с id: ${id} удалён.` });
     } catch (error) {
-      if (error instanceof ApiError) {
-        next(error);
-      } else if (error instanceof Error) {
-        next(new ApiError(400, error.message));
-      } else {
-        next(new ApiError(400, 'Произошла ошибка при удалении пользователя.'));
-      }
+      next(error);
     }
   }
 }
