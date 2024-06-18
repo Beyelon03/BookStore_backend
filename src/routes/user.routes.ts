@@ -1,10 +1,8 @@
 import { Router } from 'express';
 import userController from '../controllers/user.controller';
-import {
-  getRegistrationValidation,
-  validateRequest,
-} from '../middlewares/userValidator.middleware';
 import adminMiddleware from '../middlewares/admin.middleware';
+import getRegistrationValidation from '../middlewares/userValidator.middleware';
+import validateRequest from '../middlewares/validateRequest.middleware';
 
 const router = Router();
 

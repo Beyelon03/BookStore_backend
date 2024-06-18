@@ -7,26 +7,20 @@ class UserController {
   async registration(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password, username } = req.body;
-      const userData = await UserService.registration(
-        email,
-        password,
-        username,
-      );
+      const userData = await UserService.registration(email, password, username);
       res.cookie('refreshToken', userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
       });
       return res.status(201).json(userData);
     } catch (error) {
-      next(error);
+      if (error instanceof Error) {
+        next(error);
+      }
     }
   }
 
-  async login(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<Response<{ token: string }> | void> {
+  async login(req: Request, res: Response, next: NextFunction) {
     try {
       const { username, password } = req.body;
       const token = await UserService.login(username, password);
@@ -36,11 +30,7 @@ class UserController {
     }
   }
 
-  async logout(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<Response<{ token: string }> | void> {
+  async logout(req: Request, res: Response, next: NextFunction) {
     try {
       const { username, password } = req.body;
       const token = await UserService.logout(username, password);
@@ -50,11 +40,7 @@ class UserController {
     }
   }
 
-  async refresh(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<Response<{ token: string }> | void> {
+  async refresh(req: Request, res: Response, next: NextFunction) {
     try {
       const { username, password } = req.body;
       const token = await UserService.refresh(username, password);
@@ -64,16 +50,12 @@ class UserController {
     }
   }
 
-  async getById(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<Response<IUser> | void> {
+  async getById(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
       const userData = await UserService.getById(id);
       if (!userData) {
-        next(ApiError.NotFound( `Пользователь с id: ${id} не найден.`));
+        next(ApiError.NotFound(`Пользователь с id: ${id} не найден.`));
         return;
       }
       res.status(200).json(userData);
@@ -82,11 +64,7 @@ class UserController {
     }
   }
 
-  async getAll(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<Response<IUser[]> | void> {
+  async getAll(req: Request, res: Response, next: NextFunction) {
     try {
       const users = await UserService.getAll();
       return res.status(200).json(users);
@@ -95,11 +73,7 @@ class UserController {
     }
   }
 
-  async update(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<Response<IUser> | void> {
+  async update(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
       const user: IUser | null = await UserService.update(id, req.body);
