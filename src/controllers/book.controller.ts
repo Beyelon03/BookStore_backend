@@ -13,7 +13,7 @@ class BookController {
       const bookData: IBook = await BookService.create(req.body);
       return res.status(201).json(bookData);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -31,7 +31,7 @@ class BookController {
       }
       return res.status(200).json(bookData);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -44,7 +44,7 @@ class BookController {
       const books = await BookService.getAll();
       return res.status(200).json(books);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -62,7 +62,7 @@ class BookController {
       }
       return res.status(200).json(book);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -76,7 +76,7 @@ class BookController {
       await BookService.delete(id);
       return res.status(200).json({ message: `Книга с id: ${id} удалена.` });
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 }

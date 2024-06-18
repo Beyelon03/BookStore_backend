@@ -7,7 +7,11 @@ class UserController {
   async registration(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password, username } = req.body;
-      const userData = await UserService.registration(email, password, username);
+      const userData = await UserService.registration(
+        email,
+        password,
+        username,
+      );
       res.cookie('refreshToken', userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
@@ -15,7 +19,7 @@ class UserController {
       return res.status(201).json(userData);
     } catch (error) {
       if (error instanceof Error) {
-        next(error);
+        return next(error);
       }
     }
   }
@@ -26,7 +30,7 @@ class UserController {
       const token = await UserService.login(username, password);
       return res.status(200).json({ token });
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -36,7 +40,7 @@ class UserController {
       const token = await UserService.logout(username, password);
       return res.status(200).json({ token });
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -46,7 +50,7 @@ class UserController {
       const token = await UserService.refresh(username, password);
       return res.status(200).json({ token });
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -55,12 +59,11 @@ class UserController {
       const { id } = req.params;
       const userData = await UserService.getById(id);
       if (!userData) {
-        next(ApiError.NotFound(`Пользователь с id: ${id} не найден.`));
-        return;
+        return next(ApiError.NotFound(`Пользователь с id: ${id} не найден.`));
       }
       res.status(200).json(userData);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -69,7 +72,7 @@ class UserController {
       const users = await UserService.getAll();
       return res.status(200).json(users);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -78,12 +81,11 @@ class UserController {
       const { id } = req.params;
       const user: IUser | null = await UserService.update(id, req.body);
       if (!user) {
-        next(ApiError.NotFound(`Пользователь с id: ${id} не найден.`));
-        return;
+        return next(ApiError.NotFound(`Пользователь с id: ${id} не найден.`));
       }
       return res.status(200).json(user);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -93,7 +95,7 @@ class UserController {
       await UserService.delete(id);
       res.status(200).json({ message: `Пользователь с id: ${id} удалён.` });
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 }

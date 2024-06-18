@@ -12,7 +12,7 @@ class ReviewController {
       const review = await ReviewService.create(req.body);
       return res.status(201).json(review);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -25,7 +25,7 @@ class ReviewController {
       const reviews = await ReviewService.getAll();
       return res.status(200).json(reviews);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -39,7 +39,7 @@ class ReviewController {
       const review = await ReviewService.getById(id);
       return res.status(200).json(review);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -53,7 +53,7 @@ class ReviewController {
       const review = await ReviewService.update(id, req.body);
       return res.status(201).json(review);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -69,7 +69,7 @@ class ReviewController {
         .status(200)
         .json({ message: `Пользователь с ID: ${id} удалён.` });
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 }
