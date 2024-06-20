@@ -16,16 +16,16 @@
 1. Клонируйте репозиторий: `git clone <your-repository-url>`
 2. Установите зависимости: `npm install`
 3. Создайте новый файл `.env` и добавьте следующие строки:
-    ```
-    PORT="YOUR_PORT"
-    DB_URL="YOUR_DB_URL_CONNECT"
-    JWT_SECRET="YOUR_JWT_SECRET_KEY"
-    ```
-
+ ```
+   PORT=3000
+   DB_URL=mongo_link
+   JWT_ACCESS_SECRET=jwt-secret-key
+   JWT_REFRESH_SECRET=jwt-refresh-secret-key
+   ```
 ## Использование
 
 1. Запустите сервер: `npm run start:dev`
-2. Откройте веб-сайт в браузере: `http://localhost:PORT`
+2. Откройте веб-сайт в браузере: `http://localhost:3000`
 
 ## Технологии
 
