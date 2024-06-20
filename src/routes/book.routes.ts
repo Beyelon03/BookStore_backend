@@ -1,13 +1,16 @@
 import { Router } from 'express';
-import adminMiddleware from '../middlewares/admin.middleware';
 import bookController from '../controllers/book.controller';
+import {
+  authAdminMiddleware,
+  authUserMiddleware,
+} from '../middlewares/auth.middleware';
 
 const router = Router();
 
-router.post('/create', bookController.create);
-router.get('/', adminMiddleware, bookController.getAll);
-router.get('/:id', adminMiddleware, bookController.getById);
-router.put('/:id', adminMiddleware, bookController.update);
-router.delete('/:id', adminMiddleware, bookController.delete);
+router.post('/create', authAdminMiddleware,bookController.create);
+router.get('/', authUserMiddleware, bookController.getAll);
+router.get('/:id', authUserMiddleware, bookController.getById);
+router.put('/:id', authAdminMiddleware, bookController.update);
+router.delete('/:id', authAdminMiddleware, bookController.delete);
 
 export default router;

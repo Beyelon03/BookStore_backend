@@ -3,7 +3,6 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } from '../index';
 import { ApiError } from '../exceptions/api.error';
 import Token from '../models/Token';
-import token from '../models/Token';
 
 class TokenService {
   generateTokens(payload: Partial<IUser>) {

@@ -1,4 +1,4 @@
-import { IUser } from '../interfaces/IUser';
+import { IUser, UserRoles } from '../interfaces/IUser';
 import bcrypt from 'bcrypt';
 import UserRepository from '../repositories/user.repository';
 import { ApiError } from '../exceptions/api.error';
@@ -23,6 +23,7 @@ class UserService {
       email,
       username,
       password: hashedPassword,
+      role: UserRoles.user
     });
     const userDto = new UserDto(user);
     const tokens = TokenService.generateTokens({ ...userDto });
@@ -62,7 +63,9 @@ class UserService {
     if (!refreshToken) {
       throw ApiError.UnauthorizedError();
     }
-    const userData = TokenService.validateRefreshToken(refreshToken) as JwtPayload;
+    const userData = TokenService.validateRefreshToken(
+      refreshToken,
+    ) as JwtPayload;
     const tokenFromDb = await TokenService.findToken(refreshToken);
     if (!userData || !tokenFromDb) {
       throw ApiError.UnauthorizedError();

@@ -43,8 +43,8 @@ export interface IUser {
   password: string; // Хэшированный пароль пользователя
   _id: ObjectId; // ID пользователя (генерируется MongoDB)
   username: string; // Никнейм пользователя
+  role: UserRoles; // Роль пользователя: администратор, пользователь, продавец
   name?: string; // Имя пользователя
-  role?: UserRoles; // Роль пользователя: администратор, пользователь, продавец
 
   address?: IAddress; // Адрес пользователя
   phoneNumber?: string; // Номер телефона пользователя

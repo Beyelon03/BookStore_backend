@@ -1,39 +1,42 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-import { IDecodeData } from './admin.middleware';
 import { ApiError } from '../exceptions/api.error';
-import { JWT_ACCESS_SECRET } from '../index';
+import TokenService from '../services/token.service';
+import { IUser, UserRoles } from '../interfaces/IUser';
 
-declare module 'express-serve-static-core' {
-  interface Request {
-    user?: IDecodeData;
-  }
-}
+function authorize(requiredRole?: UserRoles) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (req.method === 'OPTIONS') {
+      return next();
+    }
+    try {
+      const authorizationHeader = req.headers.authorization;
+      if (!authorizationHeader) {
+        return next(ApiError.UnauthorizedError());
+      }
+      const accessToken = authorizationHeader.split(' ')[1];
+      if (!accessToken) {
+        return next(ApiError.UnauthorizedError());
+      }
 
-export default function authMiddleware(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
-  if (req.method === 'OPTIONS') {
-    return next();
-  }
+      const userData = TokenService.validateAccessToken(accessToken) as IUser;
+      if (!userData) {
+        return next(ApiError.UnauthorizedError());
+      }
 
-  try {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) {
+      if (requiredRole && userData.role !== requiredRole) {
+        return next(ApiError.Forbidden());
+      }
+
+      req.user = userData;
+      next();
+    } catch (error) {
       return next(ApiError.UnauthorizedError());
     }
-    if (!JWT_ACCESS_SECRET) {
-      return next(new ApiError(400, 'Отсутсвует JWT_ACCESS_SECRET'));
-    }
-    const decodeData: IDecodeData = jwt.verify(
-      token,
-      JWT_ACCESS_SECRET,
-    ) as IDecodeData;
-    req.user = decodeData;
-    next();
-  } catch (error) {
-    return next(ApiError.UnauthorizedError());
-  }
+  };
 }
+
+export default authorize;
+
+export const authUserMiddleware = authorize(UserRoles.user);
+export const authAdminMiddleware = authorize(UserRoles.admin);
+export const authSellerMiddleware = authorize(UserRoles.seller);

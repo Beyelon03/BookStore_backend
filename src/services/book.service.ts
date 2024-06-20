@@ -1,5 +1,4 @@
 import { IBook } from '../interfaces/IBook';
-import Book from '../models/Book';
 import User from '../models/User';
 import { ApiError } from '../exceptions/api.error';
 import BookRepository from '../repositories/book.repository';
