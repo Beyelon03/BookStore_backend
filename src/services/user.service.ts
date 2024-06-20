@@ -3,8 +3,8 @@ import bcrypt from 'bcrypt';
 import UserRepository from '../repositories/user.repository';
 import { ApiError } from '../exceptions/api.error';
 import TokenService from './token.service';
-import tokenService from './token.service';
 import UserDto from '../dtos/user-dto';
+import { JwtPayload } from 'jsonwebtoken';
 
 class UserService {
   async registration(email: string, password: string, username: string) {
@@ -25,19 +25,13 @@ class UserService {
       password: hashedPassword,
     });
     const userDto = new UserDto(user);
-    const tokens = tokenService.generateTokens({ ...userDto });
-    await tokenService.saveToken(userDto.id, tokens.refreshToken);
+    const tokens = TokenService.generateTokens({ ...userDto });
+    await TokenService.saveToken(userDto.id, tokens.refreshToken);
 
     return { ...tokens, user: userDto };
   }
 
-  async login(
-    usernameOrEmail: string,
-    password: string,
-  ): Promise<{
-    accessToken: string;
-    refreshToken: string;
-  }> {
+  async login(usernameOrEmail: string, password: string) {
     const user =
       (await UserRepository.findOneByUsername(usernameOrEmail)) ||
       (await UserRepository.findOneByEmail(usernameOrEmail));
@@ -47,63 +41,42 @@ class UserService {
       );
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
+    const isPassEquals = await bcrypt.compare(password, user.password);
+    if (!isPassEquals) {
       throw ApiError.BadRequest('Введен не верный пароль.');
     }
 
-    const token = TokenService.generateTokens(user);
-    return { ...token };
+    const userDto = new UserDto(user);
+    const tokens = TokenService.generateTokens({ ...userDto });
+    await TokenService.saveToken(userDto.id, tokens.refreshToken);
+
+    return { ...tokens, user: userDto };
   }
 
-  async logout(
-    usernameOrEmail: string,
-    password: string,
-  ): Promise<{
-    accessToken: string;
-    refreshToken: string;
-  }> {
-    const user =
-      (await UserRepository.findOneByUsername(usernameOrEmail)) ||
-      (await UserRepository.findOneByEmail(usernameOrEmail));
-    if (!user) {
-      throw ApiError.NotFound(
-        `Пользователь с именем или email ${usernameOrEmail} не найден.`,
-      );
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      throw ApiError.BadRequest('Введен не верный пароль.');
-    }
-
-    const token = TokenService.generateTokens(user);
-    return { ...token };
+  async logout(refreshToken: string) {
+    const token = await TokenService.removeToken(refreshToken);
+    return token;
   }
 
-  async refresh(
-    usernameOrEmail: string,
-    password: string,
-  ): Promise<{
-    accessToken: string;
-    refreshToken: string;
-  }> {
-    const user =
-      (await UserRepository.findOneByUsername(usernameOrEmail)) ||
-      (await UserRepository.findOneByEmail(usernameOrEmail));
+  async refresh(refreshToken: string) {
+    if (!refreshToken) {
+      throw ApiError.UnauthorizedError();
+    }
+    const userData = TokenService.validateRefreshToken(refreshToken) as JwtPayload;
+    const tokenFromDb = await TokenService.findToken(refreshToken);
+    if (!userData || !tokenFromDb) {
+      throw ApiError.UnauthorizedError();
+    }
+    const user = await UserRepository.findById(userData.id);
     if (!user) {
-      throw ApiError.NotFound(
-        `Пользователь с именем или email ${usernameOrEmail} не найден.`,
-      );
+      throw ApiError.NotFound(`Пользователь с id: ${userData.id} не найден.`);
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      throw ApiError.BadRequest('Введен не верный пароль.');
-    }
+    const userDto = new UserDto(user);
+    const tokens = TokenService.generateTokens({ ...userDto });
+    await TokenService.saveToken(userDto.id, tokens.refreshToken);
 
-    const token = TokenService.generateTokens(user);
-    return { ...token };
+    return { ...tokens, user: userDto };
   }
 
   async getAll(): Promise<IUser[]> {
