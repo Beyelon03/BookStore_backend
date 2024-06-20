@@ -14,8 +14,8 @@ router.post('/login', userController.login);
 router.post('/logout', userController.logout);
 router.get('/refresh', userController.refresh);
 
-router.get('/', authUserMiddleware, userController.getAll);
-router.get('/:id', authUserMiddleware, userController.getById);
+router.get('/', authAdminMiddleware, userController.getAll);
+router.get('/:id', authAdminMiddleware, userController.getById);
 router.put('/:id', authAdminMiddleware, userController.update);
 router.delete('/:id', authAdminMiddleware, userController.delete);
 

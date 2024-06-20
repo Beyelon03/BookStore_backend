@@ -24,7 +24,7 @@ function authorize(requiredRole?: UserRoles) {
       }
 
       if (requiredRole && userData.role !== requiredRole) {
-        return next(ApiError.Forbidden());
+        return next(ApiError.UnauthorizedError());
       }
 
       req.user = userData;
@@ -37,6 +37,6 @@ function authorize(requiredRole?: UserRoles) {
 
 export default authorize;
 
-export const authUserMiddleware = authorize(UserRoles.user);
 export const authAdminMiddleware = authorize(UserRoles.admin);
+export const authUserMiddleware = authorize(UserRoles.user);
 export const authSellerMiddleware = authorize(UserRoles.seller);
