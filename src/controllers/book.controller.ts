@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from 'express';
 import { IBook } from '../interfaces/IBook';
 import BookService from '../services/book.service';
 import { ApiError } from '../exceptions/api.error';
+import userDto from '../dtos/user-dto';
+import UserDto from '../dtos/user-dto';
 
 class BookController {
   async create(

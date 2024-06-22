@@ -5,6 +5,7 @@ import { ApiError } from '../exceptions/api.error';
 import TokenService from './token.service';
 import UserDto from '../dtos/user-dto';
 import { JwtPayload } from 'jsonwebtoken';
+import user from '../models/User';
 
 class UserService {
   async registration(email: string, password: string, username: string) {
@@ -23,7 +24,7 @@ class UserService {
       email,
       username,
       password: hashedPassword,
-      role: UserRoles.user
+      role: UserRoles.user,
     });
     const userDto = new UserDto(user);
     const tokens = TokenService.generateTokens({ ...userDto });
@@ -82,7 +83,7 @@ class UserService {
     return { ...tokens, user: userDto };
   }
 
-  async getAll(): Promise<IUser[]> {
+  async getAll(): Promise<Array<IUser>> {
     const users = await UserRepository.findAll();
     if (!users) {
       throw ApiError.NotFound('Список пользователей пуст.');

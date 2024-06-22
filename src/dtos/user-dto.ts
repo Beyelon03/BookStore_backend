@@ -12,6 +12,10 @@ class UserDto {
     this.id = model._id.toString();
     this.role = model.role;
   }
+
+  static fromArray(models: IUser[]): UserDto[] {
+    return models.map(model => new UserDto(model));
+  }
 }
 
 export default UserDto;
