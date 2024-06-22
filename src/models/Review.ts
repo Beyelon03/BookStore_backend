@@ -31,10 +31,6 @@ const ReviewSchema: Schema<IReviewDocument> = new Schema<IReviewDocument>({
   },
 });
 
-const ReviewModel: Model<IReviewDocument> = mongoose.model<IReviewDocument>(
-  'Review',
-  ReviewSchema,
-  'reviews',
-);
+const ReviewModel: Model<IReviewDocument> = mongoose.model<IReviewDocument>('Review', ReviewSchema, 'reviews');
 
 export default ReviewModel;

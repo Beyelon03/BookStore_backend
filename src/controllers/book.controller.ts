@@ -6,11 +6,7 @@ import userDto from '../dtos/user-dto';
 import UserDto from '../dtos/user-dto';
 
 class BookController {
-  async create(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<Response<IBook> | void> {
+  async create(req: Request, res: Response, next: NextFunction): Promise<Response<IBook> | void> {
     try {
       const bookData: IBook = await BookService.create(req.body);
       return res.status(201).json(bookData);
@@ -19,11 +15,7 @@ class BookController {
     }
   }
 
-  async getById(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<Response<IBook> | void> {
+  async getById(req: Request, res: Response, next: NextFunction): Promise<Response<IBook> | void> {
     try {
       const { id } = req.params;
       const bookData = await BookService.getById(id);
@@ -37,11 +29,7 @@ class BookController {
     }
   }
 
-  async getAll(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<Response<IBook[]> | void> {
+  async getAll(req: Request, res: Response, next: NextFunction): Promise<Response<IBook[]> | void> {
     try {
       const books = await BookService.getAll();
       return res.status(200).json(books);
@@ -50,11 +38,7 @@ class BookController {
     }
   }
 
-  async update(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<Response<IBook> | void> {
+  async update(req: Request, res: Response, next: NextFunction): Promise<Response<IBook> | void> {
     try {
       const { id } = req.params;
       const book: IBook | null = await BookService.update(id, req.body);
@@ -68,11 +52,7 @@ class BookController {
     }
   }
 
-  async delete(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<Response<{ message: string }> | void> {
+  async delete(req: Request, res: Response, next: NextFunction): Promise<Response<{ message: string }> | void> {
     try {
       const { id } = req.params;
       await BookService.delete(id);

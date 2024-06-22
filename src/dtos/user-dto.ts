@@ -14,7 +14,7 @@ class UserDto {
   }
 
   static fromArray(models: IUser[]): UserDto[] {
-    return models.map(model => new UserDto(model));
+    return models.map((model) => new UserDto(model));
   }
 }
 

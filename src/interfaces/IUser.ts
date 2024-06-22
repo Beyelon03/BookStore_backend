@@ -11,7 +11,7 @@ export interface IAddress {
 export enum UserRoles {
   admin = 'admin',
   user = 'user',
-  seller = 'seller'
+  seller = 'seller',
 }
 
 // Интерфейс для элемента заказа

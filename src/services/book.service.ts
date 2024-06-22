@@ -6,10 +6,7 @@ import BookRepository from '../repositories/book.repository';
 class BookService {
   async create(book: IBook): Promise<IBook> {
     const newBook = await BookRepository.create({ ...book });
-    await User.updateMany(
-      { _id: { $in: book.seller } },
-      { $push: { books: newBook._id } }
-    );
+    await User.updateMany({ _id: { $in: book.seller } }, { $push: { books: newBook._id } });
     if (!newBook) {
       throw ApiError.BadRequest('Ошибка при создании книги.');
     }

@@ -2,10 +2,7 @@ import { Router } from 'express';
 import userController from '../controllers/user.controller';
 import getRegistrationValidation from '../middlewares/userValidator.middleware';
 import validateRequest from '../middlewares/validateRequest.middleware';
-import {
-  authAdminMiddleware,
-  authUserMiddleware,
-} from '../middlewares/auth.middleware';
+import { authAdminMiddleware, authUserMiddleware } from '../middlewares/auth.middleware';
 
 const router = Router();
 

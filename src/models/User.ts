@@ -22,7 +22,7 @@ const UserSchema: Schema<IUser> = new Schema<IUser>({
   role: {
     type: String,
     enum: UserRoles,
-    default: UserRoles.user
+    default: UserRoles.user,
   },
   address: {
     type: {

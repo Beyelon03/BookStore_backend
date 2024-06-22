@@ -9,7 +9,7 @@ const TokenSchema: Schema<IToken> = new Schema<IToken>({
   refreshToken: {
     type: String,
     required: true,
-  }
+  },
 });
 
 const TokenModel: Model<IToken> = mongoose.model<IToken>('Token', TokenSchema, 'tokens');

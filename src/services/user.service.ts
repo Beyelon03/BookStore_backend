@@ -5,18 +5,14 @@ import { ApiError } from '../exceptions/api.error';
 import TokenService from './token.service';
 import UserDto from '../dtos/user-dto';
 import { JwtPayload } from 'jsonwebtoken';
-import user from '../models/User';
 
 class UserService {
   async registration(email: string, password: string, username: string) {
     const existingUserByEmail = await UserRepository.findOneByEmail(email);
-    const existingUserByUsername =
-      await UserRepository.findOneByUsername(username);
+    const existingUserByUsername = await UserRepository.findOneByUsername(username);
 
     if (existingUserByEmail || existingUserByUsername) {
-      throw ApiError.Conflict(
-        'Пользователь с таким именем или email уже существует.',
-      );
+      throw ApiError.Conflict('Пользователь с таким именем или email уже существует.');
     }
 
     const hashedPassword = await bcrypt.hash(password, 3);
@@ -38,16 +34,13 @@ class UserService {
       (await UserRepository.findOneByUsername(usernameOrEmail)) ||
       (await UserRepository.findOneByEmail(usernameOrEmail));
     if (!user) {
-      throw ApiError.NotFound(
-        `Пользователь с именем или email ${usernameOrEmail} не найден.`,
-      );
+      throw ApiError.NotFound(`Пользователь с именем или email ${usernameOrEmail} не найден.`);
     }
 
     const isPassEquals = await bcrypt.compare(password, user.password);
     if (!isPassEquals) {
       throw ApiError.BadRequest('Введен не верный пароль.');
     }
-
     const userDto = new UserDto(user);
     const tokens = TokenService.generateTokens({ ...userDto });
     await TokenService.saveToken(userDto.id, tokens.refreshToken);
@@ -64,9 +57,7 @@ class UserService {
     if (!refreshToken) {
       throw ApiError.UnauthorizedError();
     }
-    const userData = TokenService.validateRefreshToken(
-      refreshToken,
-    ) as JwtPayload;
+    const userData = TokenService.validateRefreshToken(refreshToken) as JwtPayload;
     const tokenFromDb = await TokenService.findToken(refreshToken);
     if (!userData || !tokenFromDb) {
       throw ApiError.UnauthorizedError();
