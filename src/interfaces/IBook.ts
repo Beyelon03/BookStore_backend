@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongoose';
 
 export interface IBook {
-  _id?: string; // ID книги (генерируется MongoDB)
+  _id?: ObjectId; // ID книги (генерируется MongoDB)
   title?: string; // Название книги
   author?: string[]; // Авторы книги (массив строк)
   description?: string; // Описание книги

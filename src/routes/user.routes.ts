@@ -1,8 +1,9 @@
 import { Router } from 'express';
 import userController from '../controllers/user.controller';
-import getRegistrationValidation from '../middlewares/userValidator.middleware';
+import getRegistrationValidation from '../middlewares/user.validator.middleware';
 import validateRequest from '../middlewares/validateRequest.middleware';
-import { authAdminMiddleware, authUserMiddleware } from '../middlewares/auth.middleware';
+import { authAdminMiddleware } from '../middlewares/auth.middleware';
+import { paramIdValidator } from '../middlewares/review.validator.middleware';
 
 const router = Router();
 
@@ -12,8 +13,8 @@ router.post('/logout', userController.logout);
 router.get('/refresh', userController.refresh);
 
 router.get('/', authAdminMiddleware, userController.getAll);
-router.get('/:id', authAdminMiddleware, userController.getById);
-router.put('/:id', authAdminMiddleware, userController.update);
-router.delete('/:id', authAdminMiddleware, userController.delete);
+router.get('/:id', authAdminMiddleware, paramIdValidator(), validateRequest, userController.getById);
+router.put('/:id', authAdminMiddleware, paramIdValidator(), validateRequest, userController.update);
+router.delete('/:id', authAdminMiddleware, paramIdValidator(), validateRequest, userController.delete);
 
 export default router;

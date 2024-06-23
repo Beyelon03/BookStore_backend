@@ -25,7 +25,7 @@ function authorize(requiredRole?: UserRoles) {
         return next(ApiError.UnauthorizedError());
       }
 
-      if (requiredRole && userData.role !== requiredRole) {
+      if (requiredRole && userData.role !== requiredRole && userData.role !== UserRoles.admin) {
         return next(ApiError.UnauthorizedError());
       }
 

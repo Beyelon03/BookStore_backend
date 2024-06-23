@@ -1,11 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
 import { IReview } from '../interfaces/IUser';
 import ReviewService from '../services/review.service';
+import { ApiError } from '../exceptions/api.error';
 
 class ReviewController {
   async create(req: Request, res: Response, next: NextFunction): Promise<Response<IReview> | void> {
     try {
-      const review = await ReviewService.create(req.body);
+      const { book, commenter, comment, rating } = req.body;
+      const review = await ReviewService.create({ book, commenter, comment, rating });
       return res.status(201).json(review);
     } catch (error) {
       return next(error);
@@ -25,6 +27,9 @@ class ReviewController {
     try {
       const { id } = req.params;
       const review = await ReviewService.getById(id);
+      if (!review) {
+        return next(ApiError.NotFound(`Комментарий с id: ${id} не найден.`));
+      }
       return res.status(200).json(review);
     } catch (error) {
       return next(error);
@@ -35,7 +40,10 @@ class ReviewController {
     try {
       const { id } = req.params;
       const review = await ReviewService.update(id, req.body);
-      return res.status(201).json(review);
+      if (!review) {
+        return next(ApiError.NotFound(`Комментарий с id: ${id} не найден.`));
+      }
+      return res.status(200).json(review);
     } catch (error) {
       return next(error);
     }
@@ -44,8 +52,8 @@ class ReviewController {
   async delete(req: Request, res: Response, next: NextFunction): Promise<Response<{ message: string }> | void> {
     try {
       const { id } = req.params;
-      const delReview = await ReviewService.delete(id);
-      return res.status(200).json({ message: `Пользователь с ID: ${id} удалён.` });
+      await ReviewService.delete(id);
+      return res.status(200).json({ message: `Комментарий с id: ${id} удалён.` });
     } catch (error) {
       return next(error);
     }

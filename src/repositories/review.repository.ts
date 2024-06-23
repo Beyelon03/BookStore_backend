@@ -14,6 +14,10 @@ class ReviewRepository {
     return Review.findById(id).exec();
   }
 
+  async find(criteria: { book: string }): Promise<IReview[]> {
+    return Review.find(criteria).exec();
+  }
+
   async updateById(reviewId: string, review: Partial<IReview>): Promise<IReview | null> {
     return Review.findByIdAndUpdate(reviewId, review, { new: true }).exec();
   }

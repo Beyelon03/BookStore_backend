@@ -1,0 +1,40 @@
+import { body, param } from 'express-validator';
+
+export const getBookValidation = () => [
+  body('title').notEmpty().withMessage('Название книги обязательно.'),
+  body('author').isArray({ min: 1 }).withMessage('Автор(ы) обязательны.'),
+  body('description').notEmpty().withMessage('Описание книги обязательно.'),
+  body('price').isNumeric().withMessage('Цена книги обязательна и должна быть числом.'),
+  body('categories').isArray({ min: 1 }).withMessage('Категории обязательны.'),
+  body('isbn').notEmpty().withMessage('ISBN книги обязателен.'),
+  body('publicationDate').isDate().withMessage('Дата публикации обязательна и должна быть датой.'),
+  body('publisher').isArray({ min: 1 }).withMessage('Издатель(и) обязательны.'),
+  body('language').notEmpty().withMessage('Язык книги обязателен.'),
+  body('format').notEmpty().withMessage('Формат книги обязателен.'),
+  body('pageCount').isNumeric().withMessage('Количество страниц обязательно и должно быть числом.'),
+  body('type').notEmpty().withMessage('Тип книги обязателен.'),
+  body('ageRating').notEmpty().withMessage('Возрастной рейтинг обязателен.'),
+  body('coverImage').notEmpty().withMessage('Изображение обложки обязательно.'),
+  body('stock').isNumeric().withMessage('Количество на складе обязательно и должно быть числом.'),
+  body('seller').isArray({ min: 1 }).withMessage('Продавец(ы) обязательны.'),
+];
+
+export const updateBookValidator = () => [
+  param('id').notEmpty().withMessage('ID книги обязателен.'),
+  body('title').optional().notEmpty().withMessage('Название книги не должно быть пустым.'),
+  body('author').optional().isArray({ min: 1 }).withMessage('Автор(ы) должны быть массивом.'),
+  body('description').optional().notEmpty().withMessage('Описание книги не должно быть пустым.'),
+  body('price').optional().isNumeric().withMessage('Цена книги должна быть числом.'),
+  body('categories').optional().isArray({ min: 1 }).withMessage('Категории должны быть массивом.'),
+  body('isbn').optional().notEmpty().withMessage('ISBN книги не должно быть пустым.'),
+  body('publicationDate').optional().isDate().withMessage('Дата публикации должна быть датой.'),
+  body('publisher').optional().isArray({ min: 1 }).withMessage('Издатель(и) должны быть массивом.'),
+  body('language').optional().notEmpty().withMessage('Язык книги не должен быть пустым.'),
+  body('format').optional().notEmpty().withMessage('Формат книги не должен быть пустым.'),
+  body('pageCount').optional().isNumeric().withMessage('Количество страниц должно быть числом.'),
+  body('type').optional().notEmpty().withMessage('Тип книги не должен быть пустым.'),
+  body('ageRating').optional().notEmpty().withMessage('Возрастной рейтинг не должен быть пустым.'),
+  body('coverImage').optional().notEmpty().withMessage('Изображение обложки не должно быть пустым.'),
+  body('stock').optional().isNumeric().withMessage('Количество на складе должно быть числом.'),
+  body('seller').optional().isArray({ min: 1 }).withMessage('Продавец(ы) должны быть массивом.'),
+];

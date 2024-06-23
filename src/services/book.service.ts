@@ -1,15 +1,18 @@
 import { IBook } from '../interfaces/IBook';
-import User from '../models/User';
 import { ApiError } from '../exceptions/api.error';
 import BookRepository from '../repositories/book.repository';
+import UserModel from '../models/User';
 
 class BookService {
   async create(book: IBook): Promise<IBook> {
-    const newBook = await BookRepository.create({ ...book });
-    await User.updateMany({ _id: { $in: book.seller } }, { $push: { books: newBook._id } });
+    const newBook = await BookRepository.create(book);
+
     if (!newBook) {
       throw ApiError.BadRequest('Ошибка при создании книги.');
     }
+
+    await UserModel.updateOne({ _id: book.seller }, { $push: { books: newBook._id } });
+
     return newBook;
   }
 
@@ -46,7 +49,9 @@ class BookService {
     if (!existBook) {
       throw ApiError.NotFound(`Книга с id: ${bookId} не найдена.`);
     }
-    const deletedBook = await BookRepository.deleteById(bookId);
+    await BookRepository.deleteById(bookId);
+
+    await UserModel.updateMany({ books: bookId }, { $pull: { bookId } });
   }
 }
 

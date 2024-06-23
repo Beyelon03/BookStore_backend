@@ -94,31 +94,8 @@ const UserSchema: Schema<IUser> = new Schema<IUser>({
   ],
   comments: [
     {
-      book: {
-        type: Schema.Types.ObjectId,
-        ref: 'Book',
-        required: true,
-      },
-      commenter: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
-      },
-      comment: {
-        type: String,
-        required: true,
-      },
-      rating: {
-        type: Number,
-        min: 1,
-        max: 5,
-        required: true,
-      },
-      date: {
-        type: Date,
-        required: true,
-        default: Date.now,
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Review',
     },
   ],
   books: [

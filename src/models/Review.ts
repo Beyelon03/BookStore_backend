@@ -1,16 +1,15 @@
+// models/Review.ts
 import mongoose, { Model, Schema } from 'mongoose';
 import { IReview } from '../interfaces/IUser';
 
-export interface IReviewDocument extends IReview, Document {}
-
-const ReviewSchema: Schema<IReviewDocument> = new Schema<IReviewDocument>({
+const ReviewSchema: Schema<IReview> = new Schema<IReview>({
   book: {
-    type: Schema.Types.Mixed,
+    type: Schema.Types.ObjectId,
     ref: 'Book',
     required: true,
   },
   commenter: {
-    type: Schema.Types.Mixed,
+    type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,
   },
@@ -31,6 +30,6 @@ const ReviewSchema: Schema<IReviewDocument> = new Schema<IReviewDocument>({
   },
 });
 
-const ReviewModel: Model<IReviewDocument> = mongoose.model<IReviewDocument>('Review', ReviewSchema, 'reviews');
+const ReviewModel: Model<IReview> = mongoose.model<IReview>('Review', ReviewSchema, 'reviews');
 
 export default ReviewModel;

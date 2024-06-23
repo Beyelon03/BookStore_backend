@@ -30,6 +30,7 @@ export interface IOrder {
 
 // Интерфейс для комментария пользователя
 export interface IReview {
+  _id?: ObjectId;
   commenter?: ObjectId; // ID пользователя, оставившего отзыв
   book?: ObjectId; // ID книги, к которой относится отзыв
   comment?: string; // Текст отзыва
@@ -55,6 +56,6 @@ export interface IUser {
   favorites?: string[]; // Массив ID избранных книг пользователя
   cart?: IOrderItem[]; // Корзина пользователя
 
-  comments?: IReview[]; // Комментарии пользователя
+  comments?: ObjectId[]; // Комментарии пользователя
   books?: ObjectId[]; // Массив ID книг пользователя которые на продаже
 }
