@@ -6,7 +6,7 @@ import Token from '../models/Token';
 import { ObjectId } from 'mongoose';
 
 class TokenService {
-  generateTokens(payload: Partial<IUser>) {
+  generateTokens(payload: Partial<IUser>): { accessToken: string; refreshToken: string } {
     if (!JWT_ACCESS_SECRET) {
       throw new ApiError(400, 'Ошибка, не указан JWT_ACCESS_SECRET.');
     }

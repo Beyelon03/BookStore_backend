@@ -7,10 +7,13 @@ import UserDto from '../dtos/user-dto';
 import { JwtPayload } from 'jsonwebtoken';
 
 class UserService {
-  async registration(email: string, password: string, username: string) {
+  async registration(
+    email: string,
+    password: string,
+    username: string,
+  ): Promise<{ user: UserDto; accessToken: string; refreshToken: string }> {
     const existingUserByEmail = await UserRepository.findOneByEmail(email);
     const existingUserByUsername = await UserRepository.findOneByUsername(username);
-
     if (existingUserByEmail || existingUserByUsername) {
       throw ApiError.Conflict('Пользователь с таким именем или email уже существует.');
     }
@@ -25,11 +28,13 @@ class UserService {
     const userDto = new UserDto(user);
     const tokens = TokenService.generateTokens({ ...userDto });
     await TokenService.saveToken(userDto._id, tokens.refreshToken);
-
     return { ...tokens, user: userDto };
   }
 
-  async login(usernameOrEmail: string, password: string) {
+  async login(
+    usernameOrEmail: string,
+    password: string,
+  ): Promise<{ user: UserDto; accessToken: string; refreshToken: string }> {
     const user =
       (await UserRepository.findOneByUsername(usernameOrEmail)) ||
       (await UserRepository.findOneByEmail(usernameOrEmail));
@@ -46,12 +51,12 @@ class UserService {
     return { ...tokens, user: userDto };
   }
 
-  async logout(refreshToken: string) {
+  async logout(refreshToken: string): Promise<{ message: string }> {
     const token = await TokenService.removeToken(refreshToken);
     return { message: 'Токен удалён.' };
   }
 
-  async refresh(refreshToken: string) {
+  async refresh(refreshToken: string): Promise<{ user: UserDto; accessToken: string; refreshToken: string }> {
     if (!refreshToken) {
       throw ApiError.UnauthorizedError();
     }
@@ -81,7 +86,7 @@ class UserService {
     return usersDto;
   }
 
-  async getById(userId: string): Promise<UserDto | null> {
+  async getById(userId: string): Promise<UserDto> {
     const user = await UserRepository.findById(userId);
     if (!user) {
       throw ApiError.NotFound(`Пользователь с id: ${userId} не найден.`);
@@ -90,7 +95,7 @@ class UserService {
     return userDto;
   }
 
-  async update(userId: string, user: Partial<IUser>): Promise<UserDto | null> {
+  async update(userId: string, user: Partial<IUser>): Promise<UserDto> {
     const existingUserById = await UserRepository.findById(userId);
     if (!existingUserById) {
       throw ApiError.NotFound(`Пользователь с id: ${userId} не найден.`);

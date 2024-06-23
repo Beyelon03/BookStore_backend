@@ -5,7 +5,7 @@ import UserModel from '../models/User';
 import BookDto from '../dtos/book-dto';
 
 class BookService {
-  async create(book: IBook): Promise<IBook> {
+  async create(book: IBook): Promise<BookDto> {
     const newBook = await BookRepository.create(book);
     if (!newBook) {
       throw ApiError.BadRequest('Ошибка при создании книги.');
@@ -24,7 +24,7 @@ class BookService {
     return booksDto;
   }
 
-  async getById(id: string): Promise<IBook | null> {
+  async getById(id: string): Promise<BookDto> {
     const book = await BookRepository.findById(id);
     if (!book) {
       throw ApiError.NotFound(`Книга с id: ${id} не найдена.`);
@@ -33,7 +33,7 @@ class BookService {
     return bookDto;
   }
 
-  async update(bookId: string, book: Partial<IBook>): Promise<IBook | null> {
+  async update(bookId: string, book: Partial<IBook>): Promise<BookDto> {
     const existBook = await BookRepository.findById(bookId);
     if (!existBook) {
       throw ApiError.NotFound(`Книга с id: ${bookId} не найдена.`);

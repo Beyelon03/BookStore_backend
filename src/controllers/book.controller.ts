@@ -7,7 +7,7 @@ import BookDto from '../dtos/book-dto';
 class BookController {
   async create(req: Request, res: Response, next: NextFunction): Promise<Response<BookDto> | void> {
     try {
-      const bookData: IBook = await BookService.create(req.body);
+      const bookData = await BookService.create(req.body);
       return res.status(201).json(bookData);
     } catch (error) {
       next(error);

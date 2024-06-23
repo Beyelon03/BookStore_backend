@@ -5,7 +5,7 @@ import User from '../models/User';
 import ReviewDto from '../dtos/review-dto';
 
 class ReviewService {
-  async create(reviewDto: Partial<IReview>): Promise<ReviewDto | null> {
+  async create(reviewDto: Partial<IReview>): Promise<ReviewDto> {
     try {
       const review = await ReviewRepository.create(reviewDto);
       if (!review) {
@@ -24,7 +24,7 @@ class ReviewService {
     }
   }
 
-  async getAll(): Promise<IReview[] | null> {
+  async getAll(): Promise<IReview[]> {
     try {
       const reviews = await ReviewRepository.getAll();
       if (!reviews) {
@@ -37,7 +37,7 @@ class ReviewService {
     }
   }
 
-  async getById(reviewId: string): Promise<IReview | null> {
+  async getById(reviewId: string): Promise<IReview> {
     try {
       const review = await ReviewRepository.findById(reviewId);
       if (!review) {
@@ -50,7 +50,7 @@ class ReviewService {
     }
   }
 
-  async update(reviewId: string, newReview: IReview): Promise<IReview | null> {
+  async update(reviewId: string, newReview: IReview): Promise<IReview> {
     try {
       const review = await ReviewRepository.updateById(reviewId, newReview);
       if (!review) {
