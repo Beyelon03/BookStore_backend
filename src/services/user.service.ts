@@ -14,17 +14,17 @@ class UserService {
     if (existingUserByEmail || existingUserByUsername) {
       throw ApiError.Conflict('Пользователь с таким именем или email уже существует.');
     }
-
     const hashedPassword = await bcrypt.hash(password, 3);
-    const user: IUser = await UserRepository.create({
+    const user = await UserRepository.create({
       email,
       username,
       password: hashedPassword,
       role: UserRoles.user,
+      createdAt: new Date(),
     });
     const userDto = new UserDto(user);
     const tokens = TokenService.generateTokens({ ...userDto });
-    await TokenService.saveToken(userDto.id, tokens.refreshToken);
+    await TokenService.saveToken(userDto._id, tokens.refreshToken);
 
     return { ...tokens, user: userDto };
   }
@@ -36,15 +36,13 @@ class UserService {
     if (!user) {
       throw ApiError.NotFound(`Пользователь с именем или email ${usernameOrEmail} не найден.`);
     }
-
     const isPassEquals = await bcrypt.compare(password, user.password);
     if (!isPassEquals) {
       throw ApiError.BadRequest('Введен не верный пароль.');
     }
     const userDto = new UserDto(user);
     const tokens = TokenService.generateTokens({ ...userDto });
-    await TokenService.saveToken(userDto.id, tokens.refreshToken);
-
+    await TokenService.saveToken(userDto._id, tokens.refreshToken);
     return { ...tokens, user: userDto };
   }
 
@@ -69,33 +67,40 @@ class UserService {
 
     const userDto = new UserDto(user);
     const tokens = TokenService.generateTokens({ ...userDto });
-    await TokenService.saveToken(userDto.id, tokens.refreshToken);
+    await TokenService.saveToken(userDto._id, tokens.refreshToken);
 
     return { ...tokens, user: userDto };
   }
 
-  async getAll(): Promise<Array<IUser>> {
+  async getAll(): Promise<Array<UserDto>> {
     const users = await UserRepository.findAll();
     if (!users) {
       throw ApiError.NotFound('Список пользователей пуст.');
     }
-    return users;
+    const usersDto = UserDto.fromArray(users);
+    return usersDto;
   }
 
-  async getById(userId: string): Promise<IUser | null> {
+  async getById(userId: string): Promise<UserDto | null> {
     const user = await UserRepository.findById(userId);
     if (!user) {
       throw ApiError.NotFound(`Пользователь с id: ${userId} не найден.`);
     }
-    return user;
+    const userDto = new UserDto(user);
+    return userDto;
   }
 
-  async update(userId: string, user: Partial<IUser>): Promise<IUser | null> {
+  async update(userId: string, user: Partial<IUser>): Promise<UserDto | null> {
     const existingUserById = await UserRepository.findById(userId);
     if (!existingUserById) {
       throw ApiError.NotFound(`Пользователь с id: ${userId} не найден.`);
     }
-    return await UserRepository.updateById(userId, user);
+    const updatedUser = await UserRepository.updateById(userId, user);
+    if (!updatedUser) {
+      throw ApiError.BadRequest('Ошибка при обновлении пользователя.');
+    }
+    const userDto = new UserDto(updatedUser);
+    return userDto;
   }
 
   async delete(userId: string): Promise<void> {

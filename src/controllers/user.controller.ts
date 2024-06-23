@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { IUser } from '../interfaces/IUser';
 import UserService from '../services/user.service';
 import { ApiError } from '../exceptions/api.error';
 
@@ -84,7 +83,7 @@ class UserController {
   async update(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const user: IUser | null = await UserService.update(id, req.body);
+      const user = await UserService.update(id, req.body);
       if (!user) {
         return next(ApiError.NotFound(`Пользователь с id: ${id} не найден.`));
       }

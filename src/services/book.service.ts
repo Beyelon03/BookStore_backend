@@ -2,26 +2,26 @@ import { IBook } from '../interfaces/IBook';
 import { ApiError } from '../exceptions/api.error';
 import BookRepository from '../repositories/book.repository';
 import UserModel from '../models/User';
+import BookDto from '../dtos/book-dto';
 
 class BookService {
   async create(book: IBook): Promise<IBook> {
     const newBook = await BookRepository.create(book);
-
     if (!newBook) {
       throw ApiError.BadRequest('Ошибка при создании книги.');
     }
-
     await UserModel.updateOne({ _id: book.seller }, { $push: { books: newBook._id } });
-
-    return newBook;
+    const bookDto = new BookDto(newBook);
+    return bookDto;
   }
 
-  async getAll(): Promise<IBook[]> {
+  async getAll(): Promise<BookDto[]> {
     const books = await BookRepository.getAll();
     if (!books) {
       throw ApiError.NotFound('Список книг пуст.');
     }
-    return books;
+    const booksDto = BookDto.fromArray(books);
+    return booksDto;
   }
 
   async getById(id: string): Promise<IBook | null> {
@@ -29,7 +29,8 @@ class BookService {
     if (!book) {
       throw ApiError.NotFound(`Книга с id: ${id} не найдена.`);
     }
-    return book;
+    const bookDto = new BookDto(book);
+    return bookDto;
   }
 
   async update(bookId: string, book: Partial<IBook>): Promise<IBook | null> {
@@ -41,7 +42,8 @@ class BookService {
     if (!newBook) {
       throw ApiError.BadRequest(`Книга не обновлена.`);
     }
-    return newBook;
+    const bookDto = new BookDto(newBook);
+    return bookDto;
   }
 
   async delete(bookId: string): Promise<void> {
@@ -50,7 +52,6 @@ class BookService {
       throw ApiError.NotFound(`Книга с id: ${bookId} не найдена.`);
     }
     await BookRepository.deleteById(bookId);
-
     await UserModel.updateMany({ books: bookId }, { $pull: { bookId } });
   }
 }

@@ -3,6 +3,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } from '../index';
 import { ApiError } from '../exceptions/api.error';
 import Token from '../models/Token';
+import { ObjectId } from 'mongoose';
 
 class TokenService {
   generateTokens(payload: Partial<IUser>) {
@@ -49,7 +50,7 @@ class TokenService {
     }
   }
 
-  async saveToken(userId: string, refreshToken: string) {
+  async saveToken(userId: ObjectId, refreshToken: string) {
     const tokenData = await Token.findOne({ user: userId });
     if (tokenData) {
       tokenData.refreshToken = refreshToken;

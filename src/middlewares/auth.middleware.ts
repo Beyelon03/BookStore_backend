@@ -41,4 +41,3 @@ export default authorize;
 
 export const authAdminMiddleware = authorize(UserRoles.admin);
 export const authUserMiddleware = authorize(UserRoles.user);
-export const authSellerMiddleware = authorize(UserRoles.seller);

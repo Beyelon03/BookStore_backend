@@ -1,23 +1,24 @@
-import { IReview } from '../interfaces/IUser';
+import { IReview } from '../interfaces/IReview';
 import { ApiError } from '../exceptions/api.error';
 import ReviewRepository from '../repositories/review.repository';
 import User from '../models/User';
+import ReviewDto from '../dtos/review-dto';
 
 class ReviewService {
-  async create(reviewDto: IReview): Promise<IReview | null> {
+  async create(reviewDto: Partial<IReview>): Promise<ReviewDto | null> {
     try {
       const review = await ReviewRepository.create(reviewDto);
       if (!review) {
         throw ApiError.BadRequest('Ошибка при создании комментария.');
       }
-
       const user = await User.findById(reviewDto.commenter);
       if (!user) {
         throw ApiError.NotFound('Пользователь не найден.');
       }
       user.comments?.push(review._id!);
       await user.save();
-      return review;
+      const newReviewDto = new ReviewDto(review);
+      return newReviewDto;
     } catch (error) {
       throw ApiError.InternalServerError('Ошибка при создании комментария.');
     }
@@ -29,7 +30,8 @@ class ReviewService {
       if (!reviews) {
         throw ApiError.NotFound('Комментарии не найдены.');
       }
-      return reviews;
+      const newReviewDto = ReviewDto.fromArray(reviews);
+      return newReviewDto;
     } catch (error) {
       throw ApiError.InternalServerError('Ошибка при получении комментариев.');
     }
@@ -41,7 +43,8 @@ class ReviewService {
       if (!review) {
         throw ApiError.NotFound(`Комментарий с id: ${reviewId} не найден.`);
       }
-      return review;
+      const newReviewDto = new ReviewDto(review);
+      return newReviewDto;
     } catch (error) {
       throw ApiError.InternalServerError('Ошибка при получении комментария.');
     }
@@ -53,7 +56,8 @@ class ReviewService {
       if (!review) {
         throw ApiError.BadRequest('Ошибка при обновлении комментария.');
       }
-      return review;
+      const newReviewDto = new ReviewDto(review);
+      return newReviewDto;
     } catch (error) {
       throw ApiError.InternalServerError('Ошибка при обновлении комментария.');
     }
@@ -71,7 +75,6 @@ class ReviewService {
         user.comments = user.comments?.filter((commentId) => commentId.toString() !== reviewId);
         await user.save();
       }
-
       await ReviewRepository.deleteById(reviewId);
     } catch (error) {
       throw ApiError.InternalServerError('Ошибка при удалении комментария.');

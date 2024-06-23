@@ -1,4 +1,4 @@
-import { IReview } from '../interfaces/IUser';
+import { IReview } from '../interfaces/IReview';
 import Review from '../models/Review';
 
 class ReviewRepository {

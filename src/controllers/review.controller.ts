@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { IReview } from '../interfaces/IUser';
 import ReviewService from '../services/review.service';
 import { ApiError } from '../exceptions/api.error';
+import ReviewDto from '../dtos/review-dto';
 
 class ReviewController {
-  async create(req: Request, res: Response, next: NextFunction): Promise<Response<IReview> | void> {
+  async create(req: Request, res: Response, next: NextFunction): Promise<Response<ReviewDto> | void> {
     try {
       const { book, commenter, comment, rating } = req.body;
       const review = await ReviewService.create({ book, commenter, comment, rating });
@@ -14,7 +14,7 @@ class ReviewController {
     }
   }
 
-  async getAll(req: Request, res: Response, next: NextFunction): Promise<Response<IReview[]> | void> {
+  async getAll(req: Request, res: Response, next: NextFunction): Promise<Response<ReviewDto[]> | void> {
     try {
       const reviews = await ReviewService.getAll();
       return res.status(200).json(reviews);
@@ -23,7 +23,7 @@ class ReviewController {
     }
   }
 
-  async getById(req: Request, res: Response, next: NextFunction): Promise<Response<IReview> | void> {
+  async getById(req: Request, res: Response, next: NextFunction): Promise<Response<ReviewDto> | void> {
     try {
       const { id } = req.params;
       const review = await ReviewService.getById(id);
@@ -36,7 +36,7 @@ class ReviewController {
     }
   }
 
-  async update(req: Request, res: Response, next: NextFunction): Promise<Response<IReview> | void> {
+  async update(req: Request, res: Response, next: NextFunction): Promise<Response<ReviewDto> | void> {
     try {
       const { id } = req.params;
       const review = await ReviewService.update(id, req.body);

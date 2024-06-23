@@ -1,6 +1,6 @@
 // models/Review.ts
 import mongoose, { Model, Schema } from 'mongoose';
-import { IReview } from '../interfaces/IUser';
+import { IReview } from '../interfaces/IReview';
 
 const ReviewSchema: Schema<IReview> = new Schema<IReview>({
   book: {

@@ -2,9 +2,10 @@ import { NextFunction, Request, Response } from 'express';
 import { IBook } from '../interfaces/IBook';
 import BookService from '../services/book.service';
 import { ApiError } from '../exceptions/api.error';
+import BookDto from '../dtos/book-dto';
 
 class BookController {
-  async create(req: Request, res: Response, next: NextFunction): Promise<Response<IBook> | void> {
+  async create(req: Request, res: Response, next: NextFunction): Promise<Response<BookDto> | void> {
     try {
       const bookData: IBook = await BookService.create(req.body);
       return res.status(201).json(bookData);
@@ -13,7 +14,7 @@ class BookController {
     }
   }
 
-  async getById(req: Request, res: Response, next: NextFunction): Promise<Response<IBook> | void> {
+  async getById(req: Request, res: Response, next: NextFunction): Promise<Response<BookDto> | void> {
     try {
       const { id } = req.params;
       const bookData = await BookService.getById(id);
@@ -26,7 +27,7 @@ class BookController {
     }
   }
 
-  async getAll(req: Request, res: Response, next: NextFunction): Promise<Response<IBook[]> | void> {
+  async getAll(req: Request, res: Response, next: NextFunction): Promise<Response<BookDto[]> | void> {
     try {
       const books = await BookService.getAll();
       return res.status(200).json(books);
@@ -35,7 +36,7 @@ class BookController {
     }
   }
 
-  async update(req: Request, res: Response, next: NextFunction): Promise<Response<IBook> | void> {
+  async update(req: Request, res: Response, next: NextFunction): Promise<Response<BookDto> | void> {
     try {
       const { id } = req.params;
       const book: IBook | null = await BookService.update(id, req.body);
