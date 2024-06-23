@@ -9,8 +9,8 @@ const router = Router();
 
 router.post('/registration', getRegistrationValidation(), validateRequest, userController.registration);
 router.post('/login', userController.login);
-router.post('/logout', userController.logout);
-router.get('/refresh', userController.refresh);
+router.post('/logout', authUserMiddleware, userController.logout);
+router.get('/refresh', authUserMiddleware, userController.refresh);
 
 router.get('/', authUserMiddleware, userController.getAll);
 router.get('/:id', authUserMiddleware, paramIdValidator(), validateRequest, userController.getById);
