@@ -48,7 +48,7 @@ class UserService {
 
   async logout(refreshToken: string) {
     const token = await TokenService.removeToken(refreshToken);
-    return token;
+    return { message: 'Токен удалён.' };
   }
 
   async refresh(refreshToken: string) {
@@ -60,7 +60,7 @@ class UserService {
     if (!userData || !tokenFromDb) {
       throw ApiError.UnauthorizedError();
     }
-    const user = await UserRepository.findById(userData.id);
+    const user = await UserRepository.findById(userData._id);
     if (!user) {
       throw ApiError.NotFound(`Пользователь с id: ${userData.id} не найден.`);
     }
