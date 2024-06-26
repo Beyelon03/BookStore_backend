@@ -31,8 +31,7 @@ class TokenService {
       if (!JWT_ACCESS_SECRET) {
         throw new ApiError(400, 'Ошибка, не указан JWT_ACCESS_SECRET.');
       }
-      const userData = jwt.verify(token, JWT_ACCESS_SECRET);
-      return userData;
+      return jwt.verify(token, JWT_ACCESS_SECRET) as IUser;
     } catch (e) {
       return null;
     }
@@ -43,31 +42,46 @@ class TokenService {
       if (!JWT_REFRESH_SECRET) {
         throw new ApiError(400, 'Ошибка, не указан JWT_REFRESH_SECRET.');
       }
-      const userData = jwt.verify(token, JWT_REFRESH_SECRET);
-      return userData;
+      return jwt.verify(token, JWT_REFRESH_SECRET) as IUser;
     } catch (e) {
       return null;
     }
   }
 
   async saveToken(userId: ObjectId, refreshToken: string) {
-    const tokenData = await Token.findOne({ user: userId });
-    if (tokenData) {
-      tokenData.refreshToken = refreshToken;
-      return tokenData.save();
+    try {
+      const tokenData = await Token.findOne({ user: userId });
+      if (tokenData) {
+        tokenData.refreshToken = refreshToken;
+        return tokenData.save();
+      }
+      const token = await Token.create({ user: userId, refreshToken });
+      return token;
+    } catch (e) {
+      throw new ApiError(500, 'Ошибка сохранения токена.');
     }
-    const token = await Token.create({ user: userId, refreshToken });
-    return token;
   }
 
   async removeToken(refreshToken: string) {
-    const tokenData = await Token.deleteOne({ refreshToken });
-    return tokenData;
+    try {
+      const tokenData = await Token.deleteOne({ refreshToken });
+      return tokenData;
+    } catch (e) {
+      throw new ApiError(500, 'Ошибка удаления токена.');
+    }
+  }
+
+  async removeTokenByUserId(userId: ObjectId): Promise<void> {
+    await Token.deleteOne({ user: userId }).exec();
   }
 
   async findToken(refreshToken: string) {
-    const tokenData = await Token.findOne({ refreshToken });
-    return tokenData;
+    try {
+      const tokenData = await Token.findOne({ refreshToken });
+      return tokenData;
+    } catch (e) {
+      throw new ApiError(500, 'Ошибка поиска токена.');
+    }
   }
 }
 

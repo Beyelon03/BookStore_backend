@@ -80,6 +80,25 @@ class ReviewService {
       throw ApiError.InternalServerError('Ошибка при удалении комментария.');
     }
   }
+
+  async deleteAllByUser(userId: string): Promise<void> {
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        throw ApiError.NotFound(`Пользователь с id: ${userId} не найден.`);
+      }
+
+      const reviewIds = user.comments || [];
+      for (const reviewId of reviewIds) {
+        await ReviewRepository.deleteById(reviewId.toString());
+      }
+
+      user.comments = [];
+      await user.save();
+    } catch (error) {
+      throw ApiError.InternalServerError('Ошибка при удалении комментариев пользователя.');
+    }
+  }
 }
 
 export default new ReviewService();

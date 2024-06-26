@@ -13,15 +13,13 @@ class UserController {
       });
       return res.status(201).json(userData);
     } catch (error) {
-      if (error instanceof Error) {
-        return next(error);
-      }
+      next(error);
     }
   }
 
   async login(req: Request, res: Response, next: NextFunction) {
     try {
-      const { password, email } = req.body;
+      const { email, password } = req.body;
       const userData = await UserService.login(email, password);
       res.cookie('refreshToken', userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
@@ -29,18 +27,18 @@ class UserController {
       });
       return res.status(200).json(userData);
     } catch (error) {
-      return next(error);
+      next(error);
     }
   }
 
   async logout(req: Request, res: Response, next: NextFunction) {
     try {
       const { refreshToken } = req.cookies;
-      const token = await UserService.logout(refreshToken);
+      await UserService.logout(refreshToken);
       res.clearCookie('refreshToken');
-      return res.status(200).json(token);
+      return res.status(200).json({ message: 'Успешный выход из системы' });
     } catch (error) {
-      return next(error);
+      next(error);
     }
   }
 
@@ -54,7 +52,7 @@ class UserController {
       });
       return res.status(200).json(userData);
     } catch (error) {
-      return next(error);
+      next(error);
     }
   }
 
@@ -67,7 +65,7 @@ class UserController {
       }
       res.status(200).json(userData);
     } catch (error) {
-      return next(error);
+      next(error);
     }
   }
 
@@ -76,7 +74,7 @@ class UserController {
       const users = await UserService.getAll();
       return res.status(200).json(users);
     } catch (error) {
-      return next(error);
+      next(error);
     }
   }
 
@@ -89,7 +87,7 @@ class UserController {
       }
       return res.status(200).json(user);
     } catch (error) {
-      return next(error);
+      next(error);
     }
   }
 
@@ -99,7 +97,7 @@ class UserController {
       await UserService.delete(id);
       res.status(200).json({ message: `Пользователь с id: ${id} удалён.` });
     } catch (error) {
-      return next(error);
+      next(error);
     }
   }
 }
