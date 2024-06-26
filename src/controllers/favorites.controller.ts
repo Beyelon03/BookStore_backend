@@ -25,7 +25,7 @@ class FavoritesController {
   }
 
   async getAllFavorites(req: Request, res: Response, next: NextFunction) {
-    const { userId } = req.body;
+    const { userId } = req.params;
 
     try {
       const favorites = await FavoritesService.getAllFavorites(userId);

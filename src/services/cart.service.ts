@@ -3,9 +3,10 @@ import BookRepository from '../repositories/book.repository';
 import UserDto from '../dtos/user-dto';
 import User from '../models/User';
 import { ObjectId } from 'mongoose';
+import { IOrderItem } from '../interfaces/IUser';
 
-class FavoritesService {
-  async addToFavorites(userId: ObjectId, bookId: ObjectId): Promise<UserDto> {
+class CartService {
+  async addToCart(userId: ObjectId, bookId: ObjectId, quantity: number): Promise<UserDto> {
     const user = await User.findById(userId);
     if (!user) {
       throw ApiError.NotFound(`Пользователь с id: ${userId} не найден.`);
@@ -16,41 +17,43 @@ class FavoritesService {
       throw ApiError.NotFound(`Книга с id: ${bookId} не найдена.`);
     }
 
-    if (user.favorites.includes(bookId)) {
-      throw ApiError.Conflict('Книга уже добавлена в избранное.');
+    const existingCartItem = user.cart.find((item) => item.book.toString() === bookId.toString());
+    if (existingCartItem) {
+      existingCartItem.quantity += quantity;
+    } else {
+      user.cart.push({ book: bookId, quantity });
     }
 
-    user.favorites.push(bookId);
     await user.save();
 
     return new UserDto(user);
   }
 
-  async removeFromFavorites(userId: ObjectId, bookId: ObjectId): Promise<UserDto> {
+  async removeFromCart(userId: ObjectId, bookId: ObjectId): Promise<UserDto> {
     const user = await User.findById(userId);
     if (!user) {
       throw ApiError.NotFound(`Пользователь с id: ${userId} не найден.`);
     }
 
-    const bookIndex = user.favorites.indexOf(bookId);
-    if (bookIndex === -1) {
-      throw ApiError.NotFound(`Книга с id: ${bookId} не найдена в избранном пользователя.`);
+    const cartItemIndex = user.cart.findIndex((item) => item.book.toString() === bookId.toString());
+    if (cartItemIndex === -1) {
+      throw ApiError.NotFound(`Книга с id: ${bookId} не найдена в корзине пользователя.`);
     }
 
-    user.favorites.splice(bookIndex, 1);
+    user.cart.splice(cartItemIndex, 1);
     await user.save();
 
     return new UserDto(user);
   }
 
-  async getAllFavorites(userId: string): Promise<ObjectId[]> {
+  async getAllCartItems(userId: string): Promise<IOrderItem[]> {
     const user = await User.findById(userId);
     if (!user) {
       throw ApiError.NotFound(`Пользователь с id: ${userId} не найден.`);
     }
 
-    return user.favorites;
+    return user.cart;
   }
 }
 
-export default new FavoritesService();
+export default new CartService();

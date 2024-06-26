@@ -55,23 +55,30 @@ const UserSchema: Schema<IUser> = new Schema<IUser>({
     {
       orderId: {
         type: String,
+        required: true,
+        unique: true, // Можно добавить уникальность, если требуется
       },
       items: [
         {
           book: {
             type: Schema.Types.ObjectId,
             ref: 'Book',
+            required: true,
           },
           quantity: {
             type: Number,
+            required: true,
           },
         },
       ],
       totalAmount: {
         type: Number,
+        required: true,
       },
       orderDate: {
         type: Date,
+        default: Date.now,
+        required: true,
       },
     },
   ],
