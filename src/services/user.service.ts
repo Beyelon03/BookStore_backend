@@ -4,7 +4,6 @@ import UserRepository from '../repositories/user.repository';
 import { ApiError } from '../exceptions/api.error';
 import TokenService from './token.service';
 import UserDto from '../dtos/user-dto';
-import { JwtPayload } from 'jsonwebtoken';
 import ReviewService from './review.service';
 import Book from '../models/Book';
 
@@ -16,7 +15,7 @@ class UserService {
   ): Promise<{ user: UserDto; accessToken: string; refreshToken: string }> {
     await this.checkIfUserExists(email, username);
 
-    const hashedPassword = await bcrypt.hash(password, 3);
+    const hashedPassword = await bcrypt.hash(password, 5);
     const user = await UserRepository.create({
       email,
       username,
@@ -34,7 +33,7 @@ class UserService {
   ): Promise<{ user: UserDto; accessToken: string; refreshToken: string }> {
     const user = await this.findUserByUsernameOrEmail(usernameOrEmail);
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      throw ApiError.BadRequest('Неверные данные для входа.');
+      throw new ApiError(400, 'Неверные данные для входа.');
     }
 
     return this.generateUserResponse(user);
@@ -47,18 +46,18 @@ class UserService {
 
   async refresh(refreshToken: string): Promise<{ user: UserDto; accessToken: string; refreshToken: string }> {
     if (!refreshToken) {
-      throw ApiError.UnauthorizedError();
+      throw new ApiError(401, 'Отсутствует токен обновления.');
     }
 
-    const userData = TokenService.validateRefreshToken(refreshToken) as JwtPayload;
+    const userData = TokenService.validateRefreshToken(refreshToken) as IUser;
     const tokenFromDb = await TokenService.findToken(refreshToken);
     if (!userData || !tokenFromDb) {
-      throw ApiError.UnauthorizedError();
+      throw new ApiError(401, 'Недействительный токен обновления.');
     }
 
-    const user = await UserRepository.findById(userData._id);
+    const user = await UserRepository.findById(userData._id.toString());
     if (!user) {
-      throw ApiError.NotFound(`Пользователь с id: ${userData.id} не найден.`);
+      throw new ApiError(404, `Пользователь с id: ${userData._id} не найден.`);
     }
 
     return this.generateUserResponse(user);
@@ -67,7 +66,7 @@ class UserService {
   async getAll(): Promise<UserDto[]> {
     const users = await UserRepository.findAll();
     if (!users.length) {
-      throw ApiError.NotFound('Список пользователей пуст.');
+      throw new ApiError(404, 'Список пользователей пуст.');
     }
     return users.map((user) => new UserDto(user));
   }
@@ -75,7 +74,7 @@ class UserService {
   async getById(userId: string): Promise<UserDto> {
     const user = await UserRepository.findById(userId);
     if (!user) {
-      throw ApiError.NotFound(`Пользователь с id: ${userId} не найден.`);
+      throw new ApiError(404, `Пользователь с id: ${userId} не найден.`);
     }
     return new UserDto(user);
   }
@@ -83,12 +82,12 @@ class UserService {
   async update(userId: string, user: Partial<IUser>): Promise<UserDto> {
     const existingUser = await UserRepository.findById(userId);
     if (!existingUser) {
-      throw ApiError.NotFound(`Пользователь с id: ${userId} не найден.`);
+      throw new ApiError(404, `Пользователь с id: ${userId} не найден.`);
     }
 
     const updatedUser = await UserRepository.updateById(userId, user);
     if (!updatedUser) {
-      throw ApiError.BadRequest('Ошибка при обновлении пользователя.');
+      throw new ApiError(400, 'Ошибка при обновлении пользователя.');
     }
 
     return new UserDto(updatedUser);
@@ -97,16 +96,13 @@ class UserService {
   async delete(userId: string): Promise<void> {
     const existingUser = await UserRepository.findById(userId);
     if (!existingUser) {
-      throw ApiError.NotFound(`Пользователь с id: ${userId} не найден.`);
+      throw new ApiError(404, `Пользователь с id: ${userId} не найден.`);
     }
 
     await TokenService.removeTokenByUserId(existingUser._id);
     await ReviewService.deleteAllByUser(userId);
 
-    const userBooks = existingUser.books || [];
-    for (const bookId of userBooks) {
-      await Book.updateOne({ _id: bookId }, { $pull: { seller: existingUser._id } });
-    }
+    await Book.updateMany({ seller: existingUser._id }, { $pull: { seller: existingUser._id } });
 
     await UserRepository.deleteById(userId);
   }
@@ -118,7 +114,7 @@ class UserService {
     ]);
 
     if (existingUserByEmail || existingUserByUsername) {
-      throw ApiError.Conflict('Пользователь с таким именем или email уже существует.');
+      throw new ApiError(409, 'Пользователь с таким именем или email уже существует.');
     }
   }
 
@@ -133,7 +129,7 @@ class UserService {
     user: IUser,
   ): Promise<{ user: UserDto; accessToken: string; refreshToken: string }> {
     const userDto = new UserDto(user);
-    const tokens = TokenService.generateTokens({ ...userDto });
+    const tokens = TokenService.generateTokens(userDto);
     await TokenService.saveToken(userDto._id, tokens.refreshToken);
     return { ...tokens, user: userDto };
   }

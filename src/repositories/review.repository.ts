@@ -1,9 +1,20 @@
 import { IReview } from '../interfaces/IReview';
 import Review from '../models/Review';
+import { Model } from 'mongoose';
 
 class ReviewRepository {
+  private readonly reviewModel: Model<IReview>;
+
+  constructor(model: Model<IReview>) {
+    this.reviewModel = model;
+  }
+
   async create(review: Partial<IReview>): Promise<IReview> {
     return Review.create(review);
+  }
+
+  async deleteMany(filter: any): Promise<void> {
+    await this.reviewModel.deleteMany(filter);
   }
 
   async getAll(): Promise<IReview[]> {
@@ -14,8 +25,8 @@ class ReviewRepository {
     return Review.findById(id).exec();
   }
 
-  async find(criteria: { book: string }): Promise<IReview[]> {
-    return Review.find(criteria).exec();
+  async findByUser(userId: string): Promise<IReview[]> {
+    return Review.find({ commenter: userId }).populate('book').populate('commenter', 'username email').exec();
   }
 
   async updateById(reviewId: string, review: Partial<IReview>): Promise<IReview | null> {
@@ -27,4 +38,4 @@ class ReviewRepository {
   }
 }
 
-export default new ReviewRepository();
+export default new ReviewRepository(Review);

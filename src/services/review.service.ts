@@ -11,53 +11,55 @@ class ReviewService {
       if (!review) {
         throw ApiError.BadRequest('Ошибка при создании комментария.');
       }
+
       const user = await User.findById(reviewDto.commenter);
       if (!user) {
         throw ApiError.NotFound('Пользователь не найден.');
       }
+
       user.comments?.push(review._id!);
       await user.save();
-      const newReviewDto = new ReviewDto(review);
-      return newReviewDto;
+
+      return new ReviewDto(review);
     } catch (error) {
       throw ApiError.InternalServerError('Ошибка при создании комментария.');
     }
   }
 
-  async getAll(): Promise<IReview[]> {
+  async getAll(): Promise<ReviewDto[]> {
     try {
       const reviews = await ReviewRepository.getAll();
-      if (!reviews) {
+      if (!reviews || reviews.length === 0) {
         throw ApiError.NotFound('Комментарии не найдены.');
       }
-      const newReviewDto = ReviewDto.fromArray(reviews);
-      return newReviewDto;
+
+      return reviews.map((review) => new ReviewDto(review));
     } catch (error) {
       throw ApiError.InternalServerError('Ошибка при получении комментариев.');
     }
   }
 
-  async getById(reviewId: string): Promise<IReview> {
+  async getById(reviewId: string): Promise<ReviewDto> {
     try {
       const review = await ReviewRepository.findById(reviewId);
       if (!review) {
         throw ApiError.NotFound(`Комментарий с id: ${reviewId} не найден.`);
       }
-      const newReviewDto = new ReviewDto(review);
-      return newReviewDto;
+
+      return new ReviewDto(review);
     } catch (error) {
       throw ApiError.InternalServerError('Ошибка при получении комментария.');
     }
   }
 
-  async update(reviewId: string, newReview: IReview): Promise<IReview> {
+  async update(reviewId: string, newReview: IReview): Promise<ReviewDto> {
     try {
       const review = await ReviewRepository.updateById(reviewId, newReview);
       if (!review) {
         throw ApiError.BadRequest('Ошибка при обновлении комментария.');
       }
-      const newReviewDto = new ReviewDto(review);
-      return newReviewDto;
+
+      return new ReviewDto(review);
     } catch (error) {
       throw ApiError.InternalServerError('Ошибка при обновлении комментария.');
     }
@@ -75,9 +77,23 @@ class ReviewService {
         user.comments = user.comments?.filter((commentId) => commentId.toString() !== reviewId);
         await user.save();
       }
+
       await ReviewRepository.deleteById(reviewId);
     } catch (error) {
       throw ApiError.InternalServerError('Ошибка при удалении комментария.');
+    }
+  }
+
+  async getReviewsByUser(userId: string): Promise<ReviewDto[]> {
+    try {
+      const reviews = await ReviewRepository.findByUser(userId);
+      if (!reviews || reviews.length === 0) {
+        throw ApiError.NotFound(`Отзывы пользователя с id: ${userId} не найдены.`);
+      }
+
+      return reviews.map((review) => new ReviewDto(review));
+    } catch (error) {
+      throw ApiError.InternalServerError('Ошибка при получении отзывов пользователя.');
     }
   }
 
@@ -89,9 +105,7 @@ class ReviewService {
       }
 
       const reviewIds = user.comments || [];
-      for (const reviewId of reviewIds) {
-        await ReviewRepository.deleteById(reviewId.toString());
-      }
+      await ReviewRepository.deleteMany({ _id: { $in: reviewIds } });
 
       user.comments = [];
       await user.save();

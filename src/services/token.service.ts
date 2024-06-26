@@ -1,9 +1,9 @@
-import { IUser } from '../interfaces/IUser';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } from '../index';
 import { ApiError } from '../exceptions/api.error';
 import Token from '../models/Token';
 import { ObjectId } from 'mongoose';
+import { IUser } from '../interfaces/IUser';
 
 class TokenService {
   generateTokens(payload: Partial<IUser>): { accessToken: string; refreshToken: string } {
@@ -50,13 +50,13 @@ class TokenService {
 
   async saveToken(userId: ObjectId, refreshToken: string) {
     try {
-      const tokenData = await Token.findOne({ user: userId });
+      let tokenData = await Token.findOne({ user: userId });
       if (tokenData) {
         tokenData.refreshToken = refreshToken;
-        return tokenData.save();
+      } else {
+        tokenData = await Token.create({ user: userId, refreshToken });
       }
-      const token = await Token.create({ user: userId, refreshToken });
-      return token;
+      return tokenData.save();
     } catch (e) {
       throw new ApiError(500, 'Ошибка сохранения токена.');
     }
@@ -64,21 +64,23 @@ class TokenService {
 
   async removeToken(refreshToken: string) {
     try {
-      const tokenData = await Token.deleteOne({ refreshToken });
-      return tokenData;
+      return await Token.deleteOne({ refreshToken });
     } catch (e) {
       throw new ApiError(500, 'Ошибка удаления токена.');
     }
   }
 
   async removeTokenByUserId(userId: ObjectId): Promise<void> {
-    await Token.deleteOne({ user: userId }).exec();
+    try {
+      await Token.deleteOne({ user: userId });
+    } catch (e) {
+      throw new ApiError(500, 'Ошибка удаления токена по userId.');
+    }
   }
 
   async findToken(refreshToken: string) {
     try {
-      const tokenData = await Token.findOne({ refreshToken });
-      return tokenData;
+      return await Token.findOne({ refreshToken });
     } catch (e) {
       throw new ApiError(500, 'Ошибка поиска токена.');
     }
