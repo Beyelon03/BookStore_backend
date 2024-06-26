@@ -14,7 +14,7 @@ class OrderService {
       throw ApiError.NotFound(`Пользователь с id: ${userId} не найден.`);
     }
 
-    const orderId = new mongoose.Types.ObjectId().toHexString(); // Генерация нового ObjectId
+    const orderId = new mongoose.Types.ObjectId().toHexString();
 
     const newOrder = {
       orderId: orderId,
