@@ -3,9 +3,10 @@ import { NextFunction, Request, Response } from 'express';
 
 class FavoritesController {
   async addToFavorites(req: Request, res: Response, next: NextFunction) {
-    const { userId, bookId } = req.body;
-
     try {
+      const { userId } = req.params;
+      const { bookId } = req.body;
+
       const updatedUser = await FavoritesService.addToFavorites(userId, bookId);
       res.json(updatedUser);
     } catch (error) {
@@ -14,9 +15,10 @@ class FavoritesController {
   }
 
   async removeFromFavorites(req: Request, res: Response, next: NextFunction) {
-    const { userId, bookId } = req.body;
-
     try {
+      const { userId } = req.params;
+      const { bookId } = req.body;
+
       const updatedUser = await FavoritesService.removeFromFavorites(userId, bookId);
       res.json(updatedUser);
     } catch (error) {
@@ -25,9 +27,9 @@ class FavoritesController {
   }
 
   async getAllFavorites(req: Request, res: Response, next: NextFunction) {
-    const { userId } = req.params;
-
     try {
+      const { userId } = req.params;
+
       const favorites = await FavoritesService.getAllFavorites(userId);
       res.json(favorites);
     } catch (error) {

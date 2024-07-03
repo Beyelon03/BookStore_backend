@@ -25,10 +25,10 @@ class ReviewController {
 
   async getById(req: Request, res: Response, next: NextFunction): Promise<Response<ReviewDto> | void> {
     try {
-      const { id } = req.params;
-      const review = await ReviewService.getById(id);
+      const { reviewId } = req.params;
+      const review = await ReviewService.getById(reviewId);
       if (!review) {
-        return next(ApiError.NotFound(`Комментарий с id: ${id} не найден.`));
+        return next(ApiError.NotFound());
       }
       return res.status(200).json(review);
     } catch (error) {
@@ -38,10 +38,10 @@ class ReviewController {
 
   async update(req: Request, res: Response, next: NextFunction): Promise<Response<ReviewDto> | void> {
     try {
-      const { id } = req.params;
-      const review = await ReviewService.update(id, req.body);
+      const { reviewId } = req.params;
+      const review = await ReviewService.update(reviewId, req.body);
       if (!review) {
-        return next(ApiError.NotFound(`Комментарий с id: ${id} не найден.`));
+        return next(ApiError.NotFound());
       }
       return res.status(200).json(review);
     } catch (error) {
@@ -51,9 +51,9 @@ class ReviewController {
 
   async delete(req: Request, res: Response, next: NextFunction): Promise<Response<{ message: string }> | void> {
     try {
-      const { id } = req.params;
-      await ReviewService.delete(id);
-      return res.status(200).json({ message: `Комментарий с id: ${id} удалён.` });
+      const { reviewId } = req.params;
+      await ReviewService.delete(reviewId);
+      return res.status(200).json({ message: `Комментарий удалён.` });
     } catch (error) {
       return next(error);
     }

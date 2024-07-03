@@ -1,23 +1,15 @@
 import { Router } from 'express';
-import bookController from '../controllers/book.controller';
+import BookController from '../controllers/book.controller';
 import { authAdminMiddleware } from '../middlewares/auth.middleware';
 import { getBookValidation, updateBookValidator } from '../middlewares/book.validator.middleware';
 import validateRequest from '../middlewares/validateRequest.middleware';
-import { paramIdValidator } from '../middlewares/review.validator.middleware';
 
 const router = Router();
 
-router.post('/create', authAdminMiddleware, getBookValidation(), validateRequest, bookController.create);
-router.get('/', bookController.getAll);
-router.get('/:id', paramIdValidator(), validateRequest, bookController.getById);
-router.put(
-  '/:id',
-  authAdminMiddleware,
-  paramIdValidator(),
-  updateBookValidator(),
-  validateRequest,
-  bookController.update,
-);
-router.delete('/:id', authAdminMiddleware, paramIdValidator(), validateRequest, bookController.delete);
+router.post('/create', authAdminMiddleware, getBookValidation(), validateRequest, BookController.create);
+router.get('/', BookController.getAll);
+router.get('/:bookId', BookController.getById);
+router.put('/:bookId', authAdminMiddleware, updateBookValidator(), validateRequest, BookController.update);
+router.delete('/:bookId', authAdminMiddleware, BookController.delete);
 
 export default router;

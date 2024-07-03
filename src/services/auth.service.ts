@@ -5,12 +5,14 @@ import { IUser, UserRoles } from '../interfaces/IUser';
 import { ApiError } from '../exceptions/api.error';
 import TokenService from './token.service';
 
+interface userAuthResponse {
+  user: UserDto;
+  accessToken: string;
+  refreshToken: string;
+}
+
 class AuthService {
-  async registration(
-    email: string,
-    password: string,
-    username: string,
-  ): Promise<{ user: UserDto; accessToken: string; refreshToken: string }> {
+  async registration(email: string, password: string, username: string): Promise<userAuthResponse> {
     await this.checkIfUserExists(email, username);
 
     const hashedPassword = await bcrypt.hash(password, 5);
@@ -25,13 +27,10 @@ class AuthService {
     return this.generateUserResponse(user);
   }
 
-  async login(
-    usernameOrEmail: string,
-    password: string,
-  ): Promise<{ user: UserDto; accessToken: string; refreshToken: string }> {
+  async login(usernameOrEmail: string, password: string): Promise<userAuthResponse> {
     const user = await this.findUserByUsernameOrEmail(usernameOrEmail);
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      throw new ApiError(400, 'Неверные данные для входа.');
+      throw ApiError.UnauthorizedError('Неверный логин или пароль.');
     }
 
     return this.generateUserResponse(user);
@@ -42,7 +41,7 @@ class AuthService {
     return { message: 'Токен удалён.' };
   }
 
-  async refresh(refreshToken: string): Promise<{ user: UserDto; accessToken: string; refreshToken: string }> {
+  async refresh(refreshToken: string): Promise<userAuthResponse> {
     if (!refreshToken) {
       throw new ApiError(401, 'Отсутствует токен обновления.');
     }
@@ -55,7 +54,7 @@ class AuthService {
 
     const user = await UserRepository.findById(userData._id.toString());
     if (!user) {
-      throw new ApiError(404, `Пользователь с id: ${userData._id} не найден.`);
+      throw ApiError.NotFound();
     }
 
     return this.generateUserResponse(user);
@@ -68,7 +67,7 @@ class AuthService {
     ]);
 
     if (existingUserByEmail || existingUserByUsername) {
-      throw new ApiError(409, 'Пользователь с таким именем или email уже существует.');
+      throw ApiError.Conflict('Пользователь с таким именем или email уже существует.');
     }
   }
 
@@ -79,9 +78,7 @@ class AuthService {
     );
   }
 
-  private async generateUserResponse(
-    user: IUser,
-  ): Promise<{ user: UserDto; accessToken: string; refreshToken: string }> {
+  private async generateUserResponse(user: IUser): Promise<userAuthResponse> {
     const userDto = new UserDto(user);
     const tokens = TokenService.generateTokens(userDto);
     await TokenService.saveToken(userDto._id, tokens.refreshToken);

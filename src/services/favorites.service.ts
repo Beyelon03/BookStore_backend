@@ -5,15 +5,15 @@ import User from '../models/User';
 import { ObjectId } from 'mongoose';
 
 class FavoritesService {
-  async addToFavorites(userId: ObjectId, bookId: ObjectId): Promise<UserDto> {
+  async addToFavorites(userId: string, bookId: ObjectId): Promise<UserDto> {
     const user = await User.findById(userId);
     if (!user) {
-      throw ApiError.NotFound(`Пользователь с id: ${userId} не найден.`);
+      throw ApiError.NotFound();
     }
 
     const book = await BookRepository.findById(bookId.toString());
     if (!book) {
-      throw ApiError.NotFound(`Книга с id: ${bookId} не найдена.`);
+      throw ApiError.NotFound();
     }
 
     if (user.favorites.includes(bookId)) {
@@ -26,15 +26,15 @@ class FavoritesService {
     return new UserDto(user);
   }
 
-  async removeFromFavorites(userId: ObjectId, bookId: ObjectId): Promise<UserDto> {
+  async removeFromFavorites(userId: string, bookId: ObjectId): Promise<UserDto> {
     const user = await User.findById(userId);
     if (!user) {
-      throw ApiError.NotFound(`Пользователь с id: ${userId} не найден.`);
+      throw ApiError.NotFound();
     }
 
     const bookIndex = user.favorites.indexOf(bookId);
     if (bookIndex === -1) {
-      throw ApiError.NotFound(`Книга с id: ${bookId} не найдена в избранном пользователя.`);
+      throw ApiError.NotFound();
     }
 
     user.favorites.splice(bookIndex, 1);
@@ -46,7 +46,7 @@ class FavoritesService {
   async getAllFavorites(userId: string): Promise<ObjectId[]> {
     const user = await User.findById(userId);
     if (!user) {
-      throw ApiError.NotFound(`Пользователь с id: ${userId} не найден.`);
+      throw ApiError.NotFound();
     }
 
     return user.favorites;

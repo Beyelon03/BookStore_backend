@@ -3,9 +3,9 @@ import OrderService from '../services/order.service';
 
 class OrderController {
   async createOrder(req: Request, res: Response, next: NextFunction) {
-    const { userId } = req.params;
-    const { items, totalAmount } = req.body;
     try {
+      const { userId } = req.params;
+      const { items, totalAmount } = req.body;
       const user = await OrderService.createOrder(userId, items, totalAmount);
       res.json(user);
     } catch (error) {
@@ -14,8 +14,8 @@ class OrderController {
   }
 
   async getAllOrders(req: Request, res: Response, next: NextFunction) {
-    const { userId } = req.params;
     try {
+      const { userId } = req.params;
       const orders = await OrderService.getAllOrders(userId);
       res.json(orders);
     } catch (error) {
@@ -24,8 +24,8 @@ class OrderController {
   }
 
   async getOrderDetails(req: Request, res: Response, next: NextFunction) {
-    const { userId, orderId } = req.params;
     try {
+      const { userId, orderId } = req.params;
       const orderDetails = await OrderService.getOrderDetails(userId, orderId);
       res.json(orderDetails);
     } catch (error) {

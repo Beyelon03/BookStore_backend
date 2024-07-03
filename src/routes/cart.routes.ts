@@ -4,8 +4,8 @@ import { authUserMiddleware } from '../middlewares/auth.middleware';
 
 const router = Router();
 
-router.get('/cart/:userId', authUserMiddleware, CartController.getAllCartItems);
-router.post('/add-to-cart', authUserMiddleware, CartController.addToCart);
-router.post('/remove-from-cart', authUserMiddleware, CartController.removeFromCart);
+router.get('/:userId', authUserMiddleware, CartController.getAllCartItems);
+router.post('/add-to-cart/:userId', authUserMiddleware, CartController.addToCart);
+router.post('/remove-from-cart/:userId', authUserMiddleware, CartController.removeFromCart);
 
 export default router;

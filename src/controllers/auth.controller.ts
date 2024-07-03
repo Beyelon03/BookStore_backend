@@ -35,7 +35,7 @@ class AuthController {
       const { refreshToken } = req.cookies;
       await AuthService.logout(refreshToken);
       res.clearCookie('refreshToken');
-      return res.status(200).json({ message: 'Успешный выход из системы' });
+      return res.status(200).json({ message: 'Успешный выход из системы.' });
     } catch (error) {
       return next(error);
     }

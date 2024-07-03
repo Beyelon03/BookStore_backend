@@ -10,7 +10,7 @@ class UserService {
   async getAll(): Promise<UserDto[]> {
     const users = await UserRepository.findAll();
     if (!users.length) {
-      throw new ApiError(404, 'Список пользователей пуст.');
+      throw ApiError.NotFound();
     }
     return users.map((user) => new UserDto(user));
   }
@@ -18,7 +18,7 @@ class UserService {
   async getById(userId: string): Promise<UserDto> {
     const user = await UserRepository.findById(userId);
     if (!user) {
-      throw new ApiError(404, `Пользователь с id: ${userId} не найден.`);
+      throw ApiError.NotFound();
     }
     return new UserDto(user);
   }
@@ -26,12 +26,12 @@ class UserService {
   async update(userId: string, user: Partial<IUser>): Promise<UserDto> {
     const existingUser = await UserRepository.findById(userId);
     if (!existingUser) {
-      throw new ApiError(404, `Пользователь с id: ${userId} не найден.`);
+      throw ApiError.NotFound();
     }
 
     const updatedUser = await UserRepository.updateById(userId, user);
     if (!updatedUser) {
-      throw new ApiError(400, 'Ошибка при обновлении пользователя.');
+      throw ApiError.BadRequest();
     }
 
     return new UserDto(updatedUser);
@@ -40,7 +40,7 @@ class UserService {
   async delete(userId: string): Promise<void> {
     const existingUser = await UserRepository.findById(userId);
     if (!existingUser) {
-      throw new ApiError(404, `Пользователь с id: ${userId} не найден.`);
+      throw ApiError.NotFound();
     }
 
     await TokenService.removeTokenByUserId(existingUser._id);

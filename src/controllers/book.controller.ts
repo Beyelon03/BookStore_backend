@@ -10,20 +10,20 @@ class BookController {
       const bookData = await BookService.create(req.body);
       return res.status(201).json(bookData);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
   async getById(req: Request, res: Response, next: NextFunction): Promise<Response<BookDto> | void> {
     try {
-      const { id } = req.params;
-      const bookData = await BookService.getById(id);
+      const { bookId } = req.params;
+      const bookData = await BookService.getById(bookId);
       if (!bookData) {
-        throw ApiError.NotFound(`Книга с id: ${id} не найдена.`);
+        throw ApiError.NotFound();
       }
       return res.status(200).json(bookData);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -32,30 +32,30 @@ class BookController {
       const books = await BookService.getAll();
       return res.status(200).json(books);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
   async update(req: Request, res: Response, next: NextFunction): Promise<Response<BookDto> | void> {
     try {
-      const { id } = req.params;
-      const book: IBook | null = await BookService.update(id, req.body);
+      const { bookId } = req.params;
+      const book: IBook | null = await BookService.update(bookId, req.body);
       if (!book) {
-        throw ApiError.NotFound(`Книга с id: ${id} не найдена.`);
+        throw ApiError.NotFound();
       }
       return res.status(200).json(book);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
   async delete(req: Request, res: Response, next: NextFunction): Promise<Response<{ message: string }> | void> {
     try {
-      const { id } = req.params;
-      await BookService.delete(id);
-      return res.status(200).json({ message: `Книга с id: ${id} удалена.` });
+      const { bookId } = req.params;
+      await BookService.delete(bookId);
+      return res.status(200).json({ message: `Книга удалена.` });
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 }

@@ -6,15 +6,15 @@ import { ObjectId } from 'mongoose';
 import { IOrderItem } from '../interfaces/IUser';
 
 class CartService {
-  async addToCart(userId: ObjectId, bookId: ObjectId, quantity: number): Promise<UserDto> {
+  async addToCart(userId: string, bookId: ObjectId, quantity: number): Promise<UserDto> {
     const user = await User.findById(userId);
     if (!user) {
-      throw ApiError.NotFound(`Пользователь с id: ${userId} не найден.`);
+      throw ApiError.NotFound();
     }
 
     const book = await BookRepository.findById(bookId.toString());
     if (!book) {
-      throw ApiError.NotFound(`Книга с id: ${bookId} не найдена.`);
+      throw ApiError.NotFound();
     }
 
     const existingCartItem = user.cart.find((item) => item.book.toString() === bookId.toString());
@@ -29,15 +29,15 @@ class CartService {
     return new UserDto(user);
   }
 
-  async removeFromCart(userId: ObjectId, bookId: ObjectId): Promise<UserDto> {
+  async removeFromCart(userId: string, bookId: ObjectId): Promise<UserDto> {
     const user = await User.findById(userId);
     if (!user) {
-      throw ApiError.NotFound(`Пользователь с id: ${userId} не найден.`);
+      throw ApiError.NotFound();
     }
 
     const cartItemIndex = user.cart.findIndex((item) => item.book.toString() === bookId.toString());
     if (cartItemIndex === -1) {
-      throw ApiError.NotFound(`Книга с id: ${bookId} не найдена в корзине пользователя.`);
+      throw ApiError.NotFound();
     }
 
     user.cart.splice(cartItemIndex, 1);
@@ -49,7 +49,7 @@ class CartService {
   async getAllCartItems(userId: string): Promise<IOrderItem[]> {
     const user = await User.findById(userId);
     if (!user) {
-      throw ApiError.NotFound(`Пользователь с id: ${userId} не найден.`);
+      throw ApiError.NotFound();
     }
 
     return user.cart;

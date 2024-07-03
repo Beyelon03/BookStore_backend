@@ -11,7 +11,7 @@ class OrderService {
   ): Promise<UserDto> {
     const user = await User.findById(userId);
     if (!user) {
-      throw new ApiError(404, `Пользователь с id: ${userId} не найден.`);
+      throw ApiError.NotFound();
     }
 
     const orderId = new mongoose.Types.ObjectId().toHexString();
@@ -32,7 +32,7 @@ class OrderService {
   async getAllOrders(userId: string): Promise<{ orderId: string; orderDate: Date }[]> {
     const user = await User.findById(userId);
     if (!user) {
-      throw new ApiError(404, `Пользователь с id: ${userId} не найден.`);
+      throw ApiError.NotFound();
     }
 
     return user.orders.map((order) => ({
@@ -47,12 +47,12 @@ class OrderService {
   ): Promise<{ items: { book: ObjectId; quantity: number }[]; totalAmount: number }> {
     const user = await User.findById(userId);
     if (!user) {
-      throw new ApiError(404, `Пользователь с id: ${userId} не найден.`);
+      throw ApiError.NotFound();
     }
 
     const order = user.orders.find((order) => order.orderId === orderId);
     if (!order) {
-      throw new ApiError(404, `Заказ с id: ${orderId} не найден у пользователя с id: ${userId}.`);
+      throw ApiError.NotFound();
     }
 
     return {

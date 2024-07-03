@@ -9,12 +9,12 @@ import authRoutes from './auth.routes';
 
 const router = Router();
 
-router.use('/user', userRoutes);
+router.use('/users', userRoutes);
 router.use('/auth', authRoutes);
-router.use('/user/cart', cartRoutes);
-router.use('/user/favorites', favoritesRoutes);
-router.use('/user/order', orderRoutes);
-router.use('/book', bookRoutes);
-router.use('/review', reviewRoutes);
+router.use('/cart', cartRoutes);
+router.use('/favorites', favoritesRoutes);
+router.use('/orders', orderRoutes);
+router.use('/books', bookRoutes);
+router.use('/reviews', reviewRoutes);
 
 export default router;

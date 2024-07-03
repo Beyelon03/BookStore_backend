@@ -8,7 +8,7 @@ class BookService {
   async create(book: IBook): Promise<BookDto> {
     const newBook = await BookRepository.create(book);
     if (!newBook) {
-      throw new ApiError(400, 'Ошибка при создании книги.');
+      throw ApiError.BadRequest();
     }
     await UserModel.updateOne({ _id: book.seller }, { $push: { books: newBook._id } });
     return new BookDto(newBook);
@@ -25,7 +25,7 @@ class BookService {
   async getById(id: string): Promise<BookDto> {
     const book = await BookRepository.findById(id);
     if (!book) {
-      throw new ApiError(404, `Книга с id: ${id} не найдена.`);
+      throw ApiError.NotFound();
     }
     return new BookDto(book);
   }
@@ -33,11 +33,11 @@ class BookService {
   async update(bookId: string, book: Partial<IBook>): Promise<BookDto> {
     const existBook = await BookRepository.findById(bookId);
     if (!existBook) {
-      throw new ApiError(404, `Книга с id: ${bookId} не найдена.`);
+      throw ApiError.NotFound();
     }
     const updatedBook = await BookRepository.updateById(bookId, book);
     if (!updatedBook) {
-      throw new ApiError(400, 'Книга не обновлена.');
+      throw ApiError.BadRequest();
     }
     return new BookDto(updatedBook);
   }
@@ -45,7 +45,7 @@ class BookService {
   async delete(bookId: string): Promise<void> {
     const existBook = await BookRepository.findById(bookId);
     if (!existBook) {
-      throw new ApiError(404, `Книга с id: ${bookId} не найдена.`);
+      throw ApiError.NotFound();
     }
     await BookRepository.deleteById(bookId);
     await UserModel.updateMany({ books: bookId }, { $pull: { books: bookId } });
