@@ -1,14 +1,23 @@
 import { Router } from 'express';
-import getRegistrationValidation from '../middlewares/user.validator.middleware';
 import validateRequest from '../middlewares/validateRequest.middleware';
 import { authUserMiddleware } from '../middlewares/auth.middleware';
 import AuthController from '../controllers/auth.controller';
+import { getRegistrationValidation } from '../middlewares/user.validator.middleware';
 
-const router = Router();
+class AuthRoutes {
+  public router: Router;
 
-router.post('/registration', getRegistrationValidation(), validateRequest, AuthController.registration);
-router.post('/login', AuthController.login);
-router.post('/logout', authUserMiddleware, AuthController.logout);
-router.get('/refresh', authUserMiddleware, AuthController.refresh);
+  constructor() {
+    this.router = Router();
+    this.initializeRoutes();
+  }
 
-export default router;
+  private initializeRoutes() {
+    this.router.post('/registration', getRegistrationValidation(), validateRequest, AuthController.registration);
+    this.router.post('/login', AuthController.login);
+    this.router.post('/logout', authUserMiddleware, AuthController.logout);
+    this.router.get('/refresh', authUserMiddleware, AuthController.refresh);
+  }
+}
+
+export default new AuthRoutes().router;

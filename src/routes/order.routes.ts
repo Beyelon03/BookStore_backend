@@ -2,10 +2,19 @@ import { Router } from 'express';
 import OrderController from '../controllers/order.controller';
 import { authUserMiddleware } from '../middlewares/auth.middleware';
 
-const router = Router();
+class OrderRoutes {
+  public router: Router;
 
-router.post('/:userId/orders', authUserMiddleware, OrderController.createOrder);
-router.get('/:userId/orders', authUserMiddleware, OrderController.getAllOrders);
-router.get('/:userId/:orderId', authUserMiddleware, OrderController.getOrderDetails);
+  constructor() {
+    this.router = Router();
+    this.initializeRoutes();
+  }
 
-export default router;
+  private initializeRoutes() {
+    this.router.post('/:userId/orders', authUserMiddleware, OrderController.createOrder);
+    this.router.get('/:userId/orders', authUserMiddleware, OrderController.getAllOrders);
+    this.router.get('/:userId/:orderId', authUserMiddleware, OrderController.getOrderDetails);
+  }
+}
+
+export default new OrderRoutes().router;

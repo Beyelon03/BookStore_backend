@@ -1,20 +1,29 @@
 import { Router } from 'express';
-import userRoutes from './user.routes';
-import bookRoutes from './book.routes';
-import reviewRoutes from './review.routes';
-import cartRoutes from './cart.routes';
-import favoritesRoutes from './favorites.routes';
-import orderRoutes from './order.routes';
-import authRoutes from './auth.routes';
+import AuthRoutes from './auth.routes';
+import BookRoutes from './book.routes';
+import CartRoutes from './cart.routes';
+import UserRoutes from './user.routes';
+import FavoritesRoutes from './favorites.routes';
+import OrderRoutes from './order.routes';
+import ReviewRoutes from './review.routes';
 
-const router = Router();
+class AppRoutes {
+  public router: Router;
 
-router.use('/users', userRoutes);
-router.use('/auth', authRoutes);
-router.use('/cart', cartRoutes);
-router.use('/favorites', favoritesRoutes);
-router.use('/orders', orderRoutes);
-router.use('/books', bookRoutes);
-router.use('/reviews', reviewRoutes);
+  constructor() {
+    this.router = Router();
+    this.initializeRoutes();
+  }
 
-export default router;
+  private initializeRoutes() {
+    this.router.use('/users', UserRoutes);
+    this.router.use('/auth', AuthRoutes);
+    this.router.use('/cart', CartRoutes);
+    this.router.use('/favorites', FavoritesRoutes);
+    this.router.use('/orders', OrderRoutes);
+    this.router.use('/books', BookRoutes);
+    this.router.use('/reviews', ReviewRoutes);
+  }
+}
+
+export default new AppRoutes().router;

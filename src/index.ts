@@ -1,51 +1,76 @@
+import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import fileUpload from 'express-fileupload';
-import express from 'express';
-import appRoutes from './routes/app.routes';
-import handleError from './middlewares/error.middleware';
 import cookieParser from 'cookie-parser';
+import handleError from './middlewares/error.middleware';
+import AppRoutes from './routes/app.routes';
 
 dotenv.config();
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 const DB_URL = process.env.DB_URL;
 export const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
 export const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
 
-const app = express();
+class Server {
+  private app: express.Application;
+  private port: string | number;
+  private dbUrl: string | undefined;
 
-app.use(cors());
-app.use(fileUpload({}));
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(cookieParser());
+  constructor() {
+    this.app = express();
+    this.port = PORT;
+    this.dbUrl = DB_URL;
 
-app.use('/api', appRoutes);
-app.use(handleError);
-
-const startServer = async () => {
-  try {
-    if (!DB_URL) {
-      throw Error('DB_URL не определен.');
-    }
-
-    await mongoose.connect(DB_URL);
-    console.log('Подключено к MongoDB.');
-
-    app.listen(PORT, () => {
-      console.log(`Сервер запущен: http://localhost:${PORT}.`);
-    });
-  } catch (error) {
-    if (error instanceof Error) {
-      console.log('Ошибка:', error.message);
-    } else {
-      console.log('Произошла непредвиденная ошибка');
-      console.error(error);
-    }
-    process.exit(1);
+    this.initializeMiddlewares();
+    this.initializeRoutes();
+    this.initializeErrorHandling();
   }
-};
 
-startServer();
+  private initializeMiddlewares() {
+    this.app.use(cors());
+    this.app.use(fileUpload({}));
+    this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(express.json());
+    this.app.use(cookieParser());
+  }
+
+  private initializeRoutes() {
+    this.app.use('/api', AppRoutes);
+  }
+
+  private initializeErrorHandling() {
+    this.app.use(handleError);
+  }
+
+  private async connectToDatabase() {
+    if (!this.dbUrl) {
+      throw new Error('DB_URL не определен.');
+    }
+
+    await mongoose.connect(this.dbUrl);
+    console.log('Подключено к MongoDB.');
+  }
+
+  public async start() {
+    try {
+      await this.connectToDatabase();
+      this.app.listen(this.port, () => {
+        console.log(`Сервер запущен: http://localhost:${this.port}.`);
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log('Ошибка:', error.message);
+      } else {
+        console.log('Произошла непредвиденная ошибка');
+        console.error(error);
+      }
+      process.exit(1);
+    }
+  }
+}
+
+const server = new Server();
+server.start();
