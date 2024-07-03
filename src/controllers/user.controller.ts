@@ -13,7 +13,7 @@ class UserController {
       });
       return res.status(201).json(userData);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -27,7 +27,7 @@ class UserController {
       });
       return res.status(200).json(userData);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -38,7 +38,7 @@ class UserController {
       res.clearCookie('refreshToken');
       return res.status(200).json({ message: 'Успешный выход из системы' });
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -52,7 +52,7 @@ class UserController {
       });
       return res.status(200).json(userData);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -65,7 +65,7 @@ class UserController {
       }
       res.status(200).json(userData);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -74,7 +74,7 @@ class UserController {
       const users = await UserService.getAll();
       return res.status(200).json(users);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -87,7 +87,7 @@ class UserController {
       }
       return res.status(200).json(user);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -97,7 +97,7 @@ class UserController {
       await UserService.delete(id);
       res.status(200).json({ message: `Пользователь с id: ${id} удалён.` });
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 }

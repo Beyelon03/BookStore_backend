@@ -14,12 +14,8 @@ class TokenService {
       throw new ApiError(400, 'Ошибка, не указан JWT_REFRESH_SECRET.');
     }
 
-    const accessToken = jwt.sign(payload, JWT_ACCESS_SECRET, {
-      expiresIn: '30m',
-    });
-    const refreshToken = jwt.sign(payload, JWT_REFRESH_SECRET, {
-      expiresIn: '30d',
-    });
+    const accessToken = jwt.sign({ ...payload }, JWT_ACCESS_SECRET, { expiresIn: '30m' });
+    const refreshToken = jwt.sign({ ...payload }, JWT_REFRESH_SECRET, { expiresIn: '30d' });
     return {
       accessToken,
       refreshToken,

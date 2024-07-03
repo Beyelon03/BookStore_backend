@@ -12,7 +12,7 @@ router.post('/login', userController.login);
 router.post('/logout', authUserMiddleware, userController.logout);
 router.get('/refresh', authUserMiddleware, userController.refresh);
 
-router.get('/', authUserMiddleware, userController.getAll);
+router.get('/', userController.getAll);
 router.get('/:id', authUserMiddleware, paramIdValidator(), validateRequest, userController.getById);
 router.put('/:id', authAdminMiddleware, paramIdValidator(), validateRequest, userController.update);
 router.delete('/:id', authAdminMiddleware, paramIdValidator(), validateRequest, userController.delete);

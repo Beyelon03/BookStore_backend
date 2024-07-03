@@ -1,7 +1,4 @@
 import dotenv from 'dotenv';
-
-dotenv.config();
-
 import cors from 'cors';
 import mongoose from 'mongoose';
 import fileUpload from 'express-fileupload';
@@ -9,6 +6,8 @@ import express from 'express';
 import appRoutes from './routes/app.routes';
 import handleError from './middlewares/error.middleware';
 import cookieParser from 'cookie-parser';
+
+dotenv.config();
 
 const PORT = process.env.PORT;
 const DB_URL = process.env.DB_URL;
@@ -43,6 +42,7 @@ const startServer = async () => {
       console.log('Ошибка:', error.message);
     } else {
       console.log('Произошла непредвиденная ошибка');
+      console.error(error);
     }
     process.exit(1);
   }
