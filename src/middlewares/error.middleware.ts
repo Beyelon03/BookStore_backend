@@ -8,6 +8,6 @@ export default function handleError(err: any, req: Request, res: Response, next:
       errors: err.errors,
     });
   }
-  console.error(err.message);
+  console.log(err);
   return res.status(500).json({ message: 'Непредвиденная ошибка.' });
 }

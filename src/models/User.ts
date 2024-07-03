@@ -49,14 +49,13 @@ const UserSchema: Schema<IUser> = new Schema<IUser>({
   },
   createdAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
   orders: [
     {
       orderId: {
         type: String,
         required: true,
-        unique: true, // Можно добавить уникальность, если требуется
       },
       items: [
         {
