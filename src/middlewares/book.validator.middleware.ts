@@ -20,7 +20,7 @@ export const getBookValidation = () => [
 ];
 
 export const updateBookValidator = () => [
-  param('id').notEmpty().withMessage('ID книги обязателен.'),
+  param('bookId').notEmpty().withMessage('ID книги обязателен.'),
   body('title').optional().notEmpty().withMessage('Название книги не должно быть пустым.'),
   body('author').optional().isArray({ min: 1 }).withMessage('Автор(ы) должны быть массивом.'),
   body('description').optional().notEmpty().withMessage('Описание книги не должно быть пустым.'),

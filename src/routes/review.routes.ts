@@ -14,8 +14,8 @@ class ReviewRoutes {
 
   private initializeRoutes() {
     this.router.post('/create', authUserMiddleware, getReviewValidation(), validateRequest, ReviewController.create);
-    this.router.get('/', authUserMiddleware, ReviewController.getAll);
-    this.router.get('/:reviewId', authUserMiddleware, ReviewController.getById);
+    this.router.get('/', ReviewController.getAll);
+    this.router.get('/:reviewId', ReviewController.getById);
     this.router.put('/:reviewId', authAdminMiddleware, ReviewController.update);
     this.router.delete('/:reviewId', authAdminMiddleware, ReviewController.delete);
   }

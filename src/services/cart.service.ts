@@ -7,52 +7,64 @@ import { IOrderItem } from '../interfaces/IUser';
 
 class CartService {
   async addToCart(userId: string, bookId: ObjectId, quantity: number): Promise<UserDto> {
-    const user = await User.findById(userId);
-    if (!user) {
-      throw ApiError.NotFound();
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        throw ApiError.NotFound();
+      }
+
+      const book = await BookRepository.findById(bookId.toString());
+      if (!book) {
+        throw ApiError.NotFound();
+      }
+
+      const existingCartItem = user.cart.find((item) => item.book.toString() === bookId.toString());
+      if (existingCartItem) {
+        existingCartItem.quantity += quantity;
+      } else {
+        user.cart.push({ book: bookId, quantity });
+      }
+
+      await user.save();
+
+      return new UserDto(user);
+    } catch (e) {
+      throw ApiError.BadRequest();
     }
-
-    const book = await BookRepository.findById(bookId.toString());
-    if (!book) {
-      throw ApiError.NotFound();
-    }
-
-    const existingCartItem = user.cart.find((item) => item.book.toString() === bookId.toString());
-    if (existingCartItem) {
-      existingCartItem.quantity += quantity;
-    } else {
-      user.cart.push({ book: bookId, quantity });
-    }
-
-    await user.save();
-
-    return new UserDto(user);
   }
 
   async removeFromCart(userId: string, bookId: ObjectId): Promise<UserDto> {
-    const user = await User.findById(userId);
-    if (!user) {
-      throw ApiError.NotFound();
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        throw ApiError.NotFound();
+      }
+
+      const cartItemIndex = user.cart.findIndex((item) => item.book.toString() === bookId.toString());
+      if (cartItemIndex === -1) {
+        throw ApiError.NotFound();
+      }
+
+      user.cart.splice(cartItemIndex, 1);
+      await user.save();
+
+      return new UserDto(user);
+    } catch (e) {
+      throw ApiError.BadRequest();
     }
-
-    const cartItemIndex = user.cart.findIndex((item) => item.book.toString() === bookId.toString());
-    if (cartItemIndex === -1) {
-      throw ApiError.NotFound();
-    }
-
-    user.cart.splice(cartItemIndex, 1);
-    await user.save();
-
-    return new UserDto(user);
   }
 
   async getAllCartItems(userId: string): Promise<IOrderItem[]> {
-    const user = await User.findById(userId);
-    if (!user) {
-      throw ApiError.NotFound();
-    }
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        throw ApiError.NotFound();
+      }
 
-    return user.cart;
+      return user.cart;
+    } catch (e) {
+      throw ApiError.BadRequest();
+    }
   }
 }
 

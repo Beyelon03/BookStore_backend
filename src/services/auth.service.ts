@@ -13,51 +13,67 @@ interface userAuthResponse {
 
 class AuthService {
   async registration(email: string, password: string, username: string): Promise<userAuthResponse> {
-    await this.checkIfUserExists(email, username);
+    try {
+      await this.checkIfUserExists(email, username);
 
-    const hashedPassword = await bcrypt.hash(password, 5);
-    const user = await UserRepository.create({
-      email,
-      username,
-      password: hashedPassword,
-      role: UserRoles.user,
-      createdAt: new Date(),
-    });
+      const hashedPassword = await bcrypt.hash(password, 5);
+      const user = await UserRepository.create({
+        email,
+        username,
+        password: hashedPassword,
+        role: UserRoles.user,
+        createdAt: new Date(),
+      });
 
-    return this.generateUserResponse(user);
+      return this.generateUserResponse(user);
+    } catch (error) {
+      throw ApiError.BadRequest();
+    }
   }
 
   async login(usernameOrEmail: string, password: string): Promise<userAuthResponse> {
-    const user = await this.findUserByUsernameOrEmail(usernameOrEmail);
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      throw ApiError.UnauthorizedError('Неверный логин или пароль.');
-    }
+    try {
+      const user = await this.findUserByUsernameOrEmail(usernameOrEmail);
+      if (!user || !(await bcrypt.compare(password, user.password))) {
+        throw ApiError.UnauthorizedError('Неверный логин или пароль.');
+      }
 
-    return this.generateUserResponse(user);
+      return this.generateUserResponse(user);
+    } catch (error) {
+      throw ApiError.BadRequest();
+    }
   }
 
   async logout(refreshToken: string): Promise<{ message: string }> {
-    await TokenService.removeToken(refreshToken);
-    return { message: 'Токен удалён.' };
+    try {
+      await TokenService.removeToken(refreshToken);
+      return { message: 'Токен удалён.' };
+    } catch (error) {
+      throw ApiError.BadRequest();
+    }
   }
 
   async refresh(refreshToken: string): Promise<userAuthResponse> {
-    if (!refreshToken) {
-      throw new ApiError(401, 'Отсутствует токен обновления.');
-    }
+    try {
+      if (!refreshToken) {
+        throw new ApiError(401, 'Отсутствует токен обновления.');
+      }
 
-    const userData = TokenService.validateRefreshToken(refreshToken) as IUser;
-    const tokenFromDb = await TokenService.findToken(refreshToken);
-    if (!userData || !tokenFromDb) {
-      throw new ApiError(401, 'Недействительный токен обновления.');
-    }
+      const userData = TokenService.validateRefreshToken(refreshToken) as IUser;
+      const tokenFromDb = await TokenService.findToken(refreshToken);
+      if (!userData || !tokenFromDb) {
+        throw new ApiError(401, 'Недействительный токен обновления.');
+      }
 
-    const user = await UserRepository.findById(userData._id.toString());
-    if (!user) {
-      throw ApiError.NotFound();
-    }
+      const user = await UserRepository.findById(userData._id.toString());
+      if (!user) {
+        throw ApiError.NotFound();
+      }
 
-    return this.generateUserResponse(user);
+      return this.generateUserResponse(user);
+    } catch (error) {
+      throw ApiError.BadRequest();
+    }
   }
 
   private async checkIfUserExists(email: string, username: string): Promise<void> {

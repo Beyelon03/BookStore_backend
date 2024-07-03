@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { IBook } from '../interfaces/IBook';
 import BookService from '../services/book.service';
 import { ApiError } from '../exceptions/api.error';
 import BookDto from '../dtos/book-dto';
@@ -39,7 +38,7 @@ class BookController {
   async update(req: Request, res: Response, next: NextFunction): Promise<Response<BookDto> | void> {
     try {
       const { bookId } = req.params;
-      const book: IBook | null = await BookService.update(bookId, req.body);
+      const book = await BookService.update(bookId, req.body);
       if (!book) {
         throw ApiError.NotFound();
       }

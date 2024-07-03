@@ -18,11 +18,12 @@ class AppRoutes {
   private initializeRoutes() {
     this.router.use('/users', UserRoutes);
     this.router.use('/auth', AuthRoutes);
+    this.router.use('/books', BookRoutes);
+    this.router.use('/reviews', ReviewRoutes);
+
     this.router.use('/cart', CartRoutes);
     this.router.use('/favorites', FavoritesRoutes);
     this.router.use('/orders', OrderRoutes);
-    this.router.use('/books', BookRoutes);
-    this.router.use('/reviews', ReviewRoutes);
   }
 }
 

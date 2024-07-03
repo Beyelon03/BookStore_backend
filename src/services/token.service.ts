@@ -7,19 +7,23 @@ import { IUser } from '../interfaces/IUser';
 
 class TokenService {
   generateTokens(payload: Partial<IUser>): { accessToken: string; refreshToken: string } {
-    if (!JWT_ACCESS_SECRET) {
-      throw new ApiError(400, 'Ошибка, не указан JWT_ACCESS_SECRET.');
-    }
-    if (!JWT_REFRESH_SECRET) {
-      throw new ApiError(400, 'Ошибка, не указан JWT_REFRESH_SECRET.');
-    }
+    try {
+      if (!JWT_ACCESS_SECRET) {
+        throw new ApiError(400, 'Ошибка, не указан JWT_ACCESS_SECRET.');
+      }
+      if (!JWT_REFRESH_SECRET) {
+        throw new ApiError(400, 'Ошибка, не указан JWT_REFRESH_SECRET.');
+      }
 
-    const accessToken = jwt.sign({ ...payload }, JWT_ACCESS_SECRET, { expiresIn: '30m' });
-    const refreshToken = jwt.sign({ ...payload }, JWT_REFRESH_SECRET, { expiresIn: '30d' });
-    return {
-      accessToken,
-      refreshToken,
-    };
+      const accessToken = jwt.sign({ ...payload }, JWT_ACCESS_SECRET, { expiresIn: '30m' });
+      const refreshToken = jwt.sign({ ...payload }, JWT_REFRESH_SECRET, { expiresIn: '30d' });
+      return {
+        accessToken,
+        refreshToken,
+      };
+    } catch (e) {
+      throw ApiError.BadRequest();
+    }
   }
 
   validateAccessToken(token: string): string | JwtPayload | IUser | null {
