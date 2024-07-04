@@ -84,19 +84,6 @@ class ReviewService {
     }
   }
 
-  async getReviewsByUser(userId: string): Promise<ReviewDto[]> {
-    try {
-      const reviews = await ReviewRepository.findByUser(userId);
-      if (!reviews || reviews.length === 0) {
-        throw ApiError.NotFound();
-      }
-
-      return reviews.map((review) => new ReviewDto(review));
-    } catch (e) {
-      throw ApiError.BadRequest();
-    }
-  }
-
   async deleteAllByUser(userId: string): Promise<void> {
     try {
       const user = await User.findById(userId);

@@ -1,34 +1,41 @@
 import { IUser } from '../interfaces/IUser';
 import User from '../models/User';
+import { Model } from 'mongoose';
 
 class UserRepository {
-  async findOneByEmail(email: string): Promise<IUser | null> {
-    return User.findOne({ email }).exec();
-  }
+  private readonly userModel: Model<IUser>;
 
-  async findOneByUsername(username: string): Promise<IUser | null> {
-    return User.findOne({ username }).exec();
+  constructor(model: Model<IUser>) {
+    this.userModel = model;
   }
 
   async create(user: Partial<IUser>): Promise<IUser> {
-    return User.create(user);
+    return this.userModel.create(user);
   }
 
-  async findAll(): Promise<IUser[]> {
-    return User.find().exec();
+  async findOneByEmail(email: string): Promise<IUser | null> {
+    return this.userModel.findOne({ email });
+  }
+
+  async findOneByUsername(username: string): Promise<IUser | null> {
+    return this.userModel.findOne({ username });
   }
 
   async findById(id: string): Promise<IUser | null> {
-    return User.findById(id).exec();
+    return this.userModel.findById(id);
+  }
+
+  async findAll(): Promise<IUser[]> {
+    return this.userModel.find();
   }
 
   async updateById(userId: string, user: Partial<IUser>): Promise<IUser | null> {
-    return User.findByIdAndUpdate(userId, user, { new: true }).exec();
+    return this.userModel.findByIdAndUpdate(userId, user, { new: true });
   }
 
   async deleteById(userId: string): Promise<void> {
-    await User.findByIdAndDelete(userId).exec();
+    await this.userModel.findByIdAndDelete(userId);
   }
 }
 
-export default new UserRepository();
+export default new UserRepository(User);

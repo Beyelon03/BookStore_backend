@@ -10,7 +10,7 @@ class ReviewRepository {
   }
 
   async create(review: Partial<IReview>): Promise<IReview> {
-    return Review.create(review);
+    return this.reviewModel.create(review);
   }
 
   async deleteMany(filter: any): Promise<void> {
@@ -18,23 +18,19 @@ class ReviewRepository {
   }
 
   async getAll(): Promise<IReview[]> {
-    return Review.find().exec();
+    return this.reviewModel.find().exec();
   }
 
   async findById(id: string): Promise<IReview | null> {
-    return Review.findById(id).exec();
-  }
-
-  async findByUser(userId: string): Promise<IReview[]> {
-    return Review.find({ commenter: userId }).populate('book').populate('commenter', 'username email').exec();
+    return this.reviewModel.findById(id).exec();
   }
 
   async updateById(reviewId: string, review: Partial<IReview>): Promise<IReview | null> {
-    return Review.findByIdAndUpdate(reviewId, review, { new: true }).exec();
+    return this.reviewModel.findByIdAndUpdate(reviewId, review, { new: true }).exec();
   }
 
   async deleteById(reviewId: string): Promise<void> {
-    await Review.findByIdAndDelete(reviewId).exec();
+    await this.reviewModel.findByIdAndDelete(reviewId).exec();
   }
 }
 
