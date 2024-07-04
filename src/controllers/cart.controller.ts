@@ -18,7 +18,7 @@ class CartController {
       const { userId } = req.params;
       const { bookId } = req.body;
       const updatedUser = await CartService.removeFromCart(userId, bookId);
-      res.json(updatedUser);
+      return res.json(updatedUser);
     } catch (error) {
       return next(error);
     }

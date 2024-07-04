@@ -42,15 +42,19 @@ class CartService {
 
       const cartItemIndex = user.cart.findIndex((item) => item.book.toString() === bookId.toString());
       if (cartItemIndex === -1) {
-        throw ApiError.NotFound();
+        throw ApiError.NotFound('Item not found in cart.');
       }
 
-      user.cart.splice(cartItemIndex, 1);
-      await user.save();
+      if (user.cart[cartItemIndex].quantity > 1) {
+        user.cart[cartItemIndex].quantity -= 1;
+      } else {
+        user.cart.splice(cartItemIndex, 1);
+      }
 
+      await user.save();
       return new UserDto(user);
     } catch (e) {
-      throw ApiError.BadRequest();
+      throw ApiError.BadRequest('Failed to remove item from cart.');
     }
   }
 
