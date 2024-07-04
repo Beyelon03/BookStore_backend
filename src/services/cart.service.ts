@@ -7,68 +7,56 @@ import { IOrderItem } from '../interfaces/IUser';
 
 class CartService {
   async addToCart(userId: string, bookId: ObjectId, quantity: number): Promise<UserDto> {
-    try {
-      const user = await User.findById(userId);
-      if (!user) {
-        throw ApiError.NotFound();
-      }
-
-      const book = await BookRepository.findById(bookId.toString());
-      if (!book) {
-        throw ApiError.NotFound();
-      }
-
-      const existingCartItem = user.cart.find((item) => item.book.toString() === bookId.toString());
-      if (existingCartItem) {
-        existingCartItem.quantity += quantity;
-      } else {
-        user.cart.push({ book: bookId, quantity });
-      }
-
-      await user.save();
-
-      return new UserDto(user);
-    } catch (e) {
-      throw ApiError.BadRequest();
+    const user = await User.findById(userId);
+    if (!user) {
+      throw ApiError.NotFound();
     }
+
+    const book = await BookRepository.findById(bookId.toString());
+    if (!book) {
+      throw ApiError.NotFound();
+    }
+
+    const existingCartItem = user.cart.find((item) => item.book.toString() === bookId.toString());
+    if (existingCartItem) {
+      existingCartItem.quantity += quantity;
+    } else {
+      user.cart.push({ book: bookId, quantity });
+    }
+
+    await user.save();
+
+    return new UserDto(user);
   }
 
   async removeFromCart(userId: string, bookId: ObjectId): Promise<UserDto> {
-    try {
-      const user = await User.findById(userId);
-      if (!user) {
-        throw ApiError.NotFound();
-      }
-
-      const cartItemIndex = user.cart.findIndex((item) => item.book.toString() === bookId.toString());
-      if (cartItemIndex === -1) {
-        throw ApiError.NotFound('Item not found in cart.');
-      }
-
-      if (user.cart[cartItemIndex].quantity > 1) {
-        user.cart[cartItemIndex].quantity -= 1;
-      } else {
-        user.cart.splice(cartItemIndex, 1);
-      }
-
-      await user.save();
-      return new UserDto(user);
-    } catch (e) {
-      throw ApiError.BadRequest('Failed to remove item from cart.');
+    const user = await User.findById(userId);
+    if (!user) {
+      throw ApiError.NotFound();
     }
+
+    const cartItemIndex = user.cart.findIndex((item) => item.book.toString() === bookId.toString());
+    if (cartItemIndex === -1) {
+      throw ApiError.NotFound('Item not found in cart.');
+    }
+
+    if (user.cart[cartItemIndex].quantity > 1) {
+      user.cart[cartItemIndex].quantity -= 1;
+    } else {
+      user.cart.splice(cartItemIndex, 1);
+    }
+
+    await user.save();
+    return new UserDto(user);
   }
 
   async getAllCartItems(userId: string): Promise<IOrderItem[]> {
-    try {
-      const user = await User.findById(userId);
-      if (!user) {
-        throw ApiError.NotFound();
-      }
-
-      return user.cart;
-    } catch (e) {
-      throw ApiError.BadRequest();
+    const user = await User.findById(userId);
+    if (!user) {
+      throw ApiError.NotFound();
     }
+
+    return user.cart;
   }
 }
 
