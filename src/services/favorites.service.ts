@@ -12,7 +12,7 @@ class FavoritesService {
         throw ApiError.NotFound();
       }
 
-      const book = await BookRepository.findById(bookId.toString());
+      const book = await BookRepository.findById(bookId);
       if (!book) {
         throw ApiError.NotFound();
       }

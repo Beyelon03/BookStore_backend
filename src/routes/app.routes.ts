@@ -20,7 +20,6 @@ class AppRoutes {
     this.router.use('/auth', AuthRoutes);
     this.router.use('/books', BookRoutes);
     this.router.use('/reviews', ReviewRoutes);
-
     this.router.use('/cart', CartRoutes);
     this.router.use('/favorites', FavoritesRoutes);
     this.router.use('/orders', OrderRoutes);

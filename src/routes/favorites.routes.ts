@@ -11,9 +11,9 @@ class FavoritesRoutes {
   }
 
   private initializeRoutes() {
-    this.router.get('/favorites/:userId', authUserMiddleware, FavoritesController.getAllFavorites);
-    this.router.post('/favorites/add/:userId', authUserMiddleware, FavoritesController.addToFavorites);
-    this.router.post('/favorites/remove', authUserMiddleware, FavoritesController.removeFromFavorites);
+    this.router.get('/:userId', authUserMiddleware, FavoritesController.getAllFavorites);
+    this.router.post('/add/:userId', authUserMiddleware, FavoritesController.addToFavorites);
+    this.router.post('/remove/:userId', authUserMiddleware, FavoritesController.removeFromFavorites);
   }
 }
 

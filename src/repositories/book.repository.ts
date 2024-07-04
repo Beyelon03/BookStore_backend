@@ -1,5 +1,6 @@
 import { IBook } from '../interfaces/IBook';
 import Book from '../models/Book';
+import { ObjectId } from 'mongoose';
 
 class BookRepository {
   async create(book: Partial<IBook>): Promise<IBook> {
@@ -10,7 +11,7 @@ class BookRepository {
     return Book.find().exec();
   }
 
-  async findById(id: string): Promise<IBook | null> {
+  async findById(id: ObjectId): Promise<IBook | null> {
     return Book.findById(id).exec();
   }
 

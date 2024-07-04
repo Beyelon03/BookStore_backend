@@ -11,8 +11,8 @@ class OrderRoutes {
   }
 
   private initializeRoutes() {
-    this.router.post('/:userId/orders', authUserMiddleware, OrderController.createOrder);
-    this.router.get('/:userId/orders', authUserMiddleware, OrderController.getAllOrders);
+    this.router.post('/:userId', authUserMiddleware, OrderController.createOrder);
+    this.router.get('/:userId', authUserMiddleware, OrderController.getAllOrders);
     this.router.get('/:userId/:orderId', authUserMiddleware, OrderController.getOrderDetails);
   }
 }
