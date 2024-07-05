@@ -16,8 +16,8 @@ export const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
 
 class Server {
   private app: express.Application;
-  private port: string | number;
-  private dbUrl: string | undefined;
+  private readonly port: string | number;
+  private readonly dbUrl: string | undefined;
 
   constructor() {
     this.app = express();
@@ -73,4 +73,4 @@ class Server {
 }
 
 const server = new Server();
-server.start();
+server.start().catch((e) => console.error(e));

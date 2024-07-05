@@ -6,7 +6,6 @@ class FavoritesController {
     try {
       const { userId } = req.params;
       const { bookId } = req.body;
-
       const updatedUser = await FavoritesService.addToFavorites(userId, bookId);
       res.json(updatedUser);
     } catch (error) {
@@ -18,7 +17,6 @@ class FavoritesController {
     try {
       const { userId } = req.params;
       const { bookId } = req.body;
-
       const updatedUser = await FavoritesService.removeFromFavorites(userId, bookId);
       res.json(updatedUser);
     } catch (error) {
@@ -29,7 +27,6 @@ class FavoritesController {
   async getAllFavorites(req: Request, res: Response, next: NextFunction) {
     try {
       const { userId } = req.params;
-
       const favorites = await FavoritesService.getAllFavorites(userId);
       res.json(favorites);
     } catch (error) {
