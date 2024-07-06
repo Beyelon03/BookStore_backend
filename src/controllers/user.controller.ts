@@ -12,7 +12,7 @@ class UserController {
       }
       res.status(200).json(userData);
     } catch (error) {
-      return next(error);
+      next(error);
     }
   }
 
@@ -21,7 +21,7 @@ class UserController {
       const users = await UserService.getAll();
       return res.status(200).json(users);
     } catch (error) {
-      return next(error);
+      next(error);
     }
   }
 
@@ -34,7 +34,7 @@ class UserController {
       }
       return res.status(200).json(user);
     } catch (error) {
-      return next(error);
+      next(error);
     }
   }
 
@@ -44,7 +44,7 @@ class UserController {
       await UserService.delete(userId);
       res.status(200).json({ message: `Пользователь удалён.` });
     } catch (error) {
-      return next(error);
+      next(error);
     }
   }
 }

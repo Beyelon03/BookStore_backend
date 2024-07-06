@@ -10,7 +10,7 @@ class ReviewController {
       const review = await ReviewService.create({ book, commenter, comment, rating });
       return res.status(201).json(review);
     } catch (error) {
-      return next(error);
+      next(error);
     }
   }
 
@@ -19,7 +19,7 @@ class ReviewController {
       const reviews = await ReviewService.getAll();
       return res.status(200).json(reviews);
     } catch (error) {
-      return next(error);
+      next(error);
     }
   }
 
@@ -32,7 +32,7 @@ class ReviewController {
       }
       return res.status(200).json(review);
     } catch (error) {
-      return next(error);
+      next(error);
     }
   }
 
@@ -45,7 +45,7 @@ class ReviewController {
       }
       return res.status(200).json(review);
     } catch (error) {
-      return next(error);
+      next(error);
     }
   }
 
@@ -55,7 +55,7 @@ class ReviewController {
       await ReviewService.delete(reviewId);
       return res.status(200).json({ message: `Комментарий удалён.` });
     } catch (error) {
-      return next(error);
+      next(error);
     }
   }
 }

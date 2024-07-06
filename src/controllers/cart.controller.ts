@@ -9,7 +9,7 @@ class CartController {
       const updatedUser = await CartService.addToCart(userId, bookId, quantity);
       res.json(updatedUser);
     } catch (error) {
-      return next(error);
+      next(error);
     }
   }
 
@@ -20,7 +20,7 @@ class CartController {
       const updatedUser = await CartService.removeFromCart(userId, bookId);
       return res.json(updatedUser);
     } catch (error) {
-      return next(error);
+      next(error);
     }
   }
 
@@ -30,7 +30,7 @@ class CartController {
       const cartItems = await CartService.getAllCartItems(userId);
       res.json(cartItems);
     } catch (error) {
-      return next(error);
+      next(error);
     }
   }
 }

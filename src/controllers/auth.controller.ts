@@ -12,7 +12,7 @@ class AuthController {
       });
       return res.status(201).json(userData);
     } catch (error) {
-      return next(error);
+      next(error);
     }
   }
 
@@ -26,7 +26,7 @@ class AuthController {
       });
       return res.status(200).json(userData);
     } catch (error) {
-      return next(error);
+      next(error);
     }
   }
 
@@ -37,7 +37,7 @@ class AuthController {
       res.clearCookie('refreshToken');
       return res.status(200).json({ message: 'Успешный выход из системы.' });
     } catch (error) {
-      return next(error);
+      next(error);
     }
   }
 
@@ -51,7 +51,7 @@ class AuthController {
       });
       return res.status(200).json(userData);
     } catch (error) {
-      return next(error);
+      next(error);
     }
   }
 }
